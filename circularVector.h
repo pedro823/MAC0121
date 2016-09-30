@@ -23,8 +23,12 @@ void cVector_destroy(cVector *vector);
    Retorna o indice do vetor mexido,
    logo não falha caso o índice é maior que
    o tamanho do vetor.			*/
-
 int cVector_swap(cVector *vector, int index);
 
+/* Imprime o vetor, utilizado em debug. 
+   a variavel mode pode assumir 0 ou um index.
+   Caso 0, imprime o vetor inteiro.
+   Caso index, imprime o valor do índice do vetor */
+void cVector_debug(cVector *vector, int mode);
 
 #endif

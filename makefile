@@ -1,7 +1,12 @@
 .PHONY = clean
+.DELETE_ON_ERROR:
 $(CC) = gcc
+$(cflags) = -Wall -ansi -pedantic -O2
 ep3: circularVector.o ep3.o
-	$(CC) -o $@ $^
+	$(CC) -o $@ $^ $(cflags)
+
+ep3debug: circularVector.o ep3.o
+	$(CC) -o $@ $^ $(cflags) -g 
 
 circularVector.o: circularVector.h circularVector.c
 	$(CC) $^ -c

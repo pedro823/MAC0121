@@ -51,6 +51,11 @@ void specialMergeSort(int *aux, char *parity, int ini, int fim) {
 	specialMerge(aux, parity, ini, mid, fim);
 }
 
+/* Swaps an index and prints it. */
+void swapNprint(static cVector *v, int index) {
+	cVector_swap(v, index);
+	printf("%d\n", index);
+}
 
 /* Verifica se o vetor é possível de ser ordenado, antes de começar */
 int isPossible(static cVector *v, int size) {
@@ -78,6 +83,27 @@ int isPossible(static cVector *v, int size) {
 	return true;
 }
 
+/* Circular selection sort. */
+void selectCircular(cVector *v) {
+	int i, j, lower, lowerI;
+	if(v->size % 2) {
+		
+	}
+	else {
+		for(i = 0; i < v->size - 1; i++) {
+			lower = v[i];
+			lowerI = i;
+			for(j = i + 1; j < v->size; j += 2) {
+				if(v[j] < lower) {
+					lower = v[j];
+					lowerI = j;
+				}
+			}
+			for(j = lower - 2; j >= i; j -= 2)
+				swapNprint(v, j);
+		}
+	}
+}
 
 int main() {
 	int size, i;

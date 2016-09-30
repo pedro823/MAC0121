@@ -19,10 +19,11 @@ void cVector_destroy(cVector *vector) {
 	free(vector);
 }
 
-void cVector_swap(cVector *vector, int index) {
+int cVector_swap(cVector *vector, int index) {
 	int temp, size;
 	size = vector->size;
 	temp = vector->v[index % size];
 	vector->v[index % size] = vector->v[(index + 2) % size];
 	vector->v[(index + 2) % size] = temp;
+	return(index % size);
 }

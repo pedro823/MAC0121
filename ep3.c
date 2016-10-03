@@ -13,7 +13,7 @@ void specialMerge(int *aux, char *parity, int ini, int mid, int fim) {
 	res = (int*) malloc((fim - ini + 1) * sizeof(int));
 	resParity = (char*) malloc((fim - ini + 1) * sizeof(int));
 	while(i <= mid && j <= fim) {
-		if(aux[i] > aux[j]) {
+		if(aux[i] < aux[j]) {
 			res[k] = aux[i];
 			resParity[k++] = parity[i++];
 		}
@@ -43,9 +43,12 @@ void specialMerge(int *aux, char *parity, int ini, int mid, int fim) {
 	que deve fazer no aux, no parity também. Para auxiliar na checagem
 	de paridade do vetor. */
 void specialMergeSort(int *aux, char *parity, int ini, int fim) {
+	printf("specialMergeSort:\n");
 	int mid;
 	if(ini >= fim) return;
-	mid = ini + fim / 2;
+	mid = (ini + fim) / 2;
+	printf("\tini = %d\n\tfim = %d", ini, fim);
+	printf("\tmid = %d\n", mid);
 	specialMergeSort(aux, parity, ini, mid);
 	specialMergeSort(aux, parity, mid + 1, fim);
 	specialMerge(aux, parity, ini, mid, fim);
@@ -101,17 +104,23 @@ int isPossible(cVector *v, int *finalAux) {
 	if(v->size % 2) {
 		return true;
 	}
+	printf("isPossible:\n");
 	parity = (char*) malloc(v->size * sizeof(char));
 	finalAux = (int*) malloc(v->size * sizeof(int));
 	for(i = 0; i < v->size; i++) {
 		finalAux[i] = v->v[i];
 		parity[i] = i % 2;
 	}
+	printf("\tallocated parity and assigned values\n");
 	/* MergeSort com os dois vetores: Tudo que se fizer no vetor aux,
 	   se faz no vetor paridade. Caso o vetor paridade, no final, não
 	   se apresente da forma 0 1 0 1 0 1..., o vetor é impossível de se
 	   ordenar e o EP acaba por aí. */
 	specialMergeSort(finalAux, parity, 0, v->size-1);
+	printf("isPossible:\n\tback from MergeSort");
+	printf("\tvector:\n\t");
+	for(i = 0; i < v->size; i++)
+		printf("%d ", finalAux[i]);
 	for(i = 0; i < v->size; i++) {
 		if(parity[i] != (i % 2))
 			return false;
@@ -123,6 +132,7 @@ int isPossible(cVector *v, int *finalAux) {
 void selectCircular(cVector *v, int *aux) {
 	int i, j, next;
 	int *indexation;
+	printf("selectCircular\n");
 	if(v->size % 2) {
 		indexation = (int*) malloc(v->size * sizeof(int));
 		indexation[0] = 0;

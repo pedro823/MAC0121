@@ -1,16 +1,17 @@
 #include "circularVector.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 cVector *cVector_create(int size) {
 	cVector *res;
 	res = malloc(sizeof(cVector));
-	if(res == NULL) 
+	if(res == NULL)
 		return NULL;
 
 	res->v = malloc(size * sizeof(int));
 	if(res->v == NULL)
 		return NULL;
-
+	res->size = size;
 	return res;
 }
 

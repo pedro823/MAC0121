@@ -12,24 +12,24 @@ void specialMerge(int *aux, char *parity, int ini, int mid, int fim) {
 	char *resParity;
 	res = (int*) malloc((fim - ini + 1) * sizeof(int));
 	resParity = (char*) malloc((fim - ini + 1) * sizeof(int));
-	while(i <= mid && j <= end) {
+	while(i <= mid && j <= fim) {
 		if(aux[i] > aux[j]) {
 			res[k] = aux[i];
 			resParity[k++] = parity[i++];
 		}
 		else{
 			res[k] = aux[j];
-			resParity[k++] = parity[j++]
+			resParity[k++] = parity[j++];
 		}
-	
+
 	}
 	while(i <= mid) {
 		res[k] = aux[i];
-		resParity[k++] = parity[i++];	
+		resParity[k++] = parity[i++];
 	}
 	while(j <= fim) {
 		res[k] = aux[j];
-		resParity[k++] = parity[j++]
+		resParity[k++] = parity[j++];
 	}
 	for(i = 0; i < k; i++) {
 		aux[ini + i] = res[i];
@@ -39,7 +39,7 @@ void specialMerge(int *aux, char *parity, int ini, int mid, int fim) {
 	free(resParity);
 }
 
-/* Esse mergeSort também faz todas as operações 
+/* Esse mergeSort também faz todas as operações
 	que deve fazer no aux, no parity também. Para auxiliar na checagem
 	de paridade do vetor. */
 void specialMergeSort(int *aux, char *parity, int ini, int fim) {
@@ -53,10 +53,10 @@ void specialMergeSort(int *aux, char *parity, int ini, int fim) {
 
 /* Acha o próximo índice do modulo. */
 int nextIndex(int size, int current) {
+	int step;
 	if(!(size % 2)) {
 
 	}
-	int step;
 	step = (size + 1) / 2;
 	current = (current + step) % size;
 	return current;
@@ -70,12 +70,13 @@ int modulo(int n, int m) {
 }
 
 /* Resolve um vetor de tamanho 3 */
+/*
 void trivialSolve(cVector *v) {
 	int *solve = v->v;
-	if(solve[0] <= solve[1] && solve[0] <= solve[2]) { 
-		/* O primeiro está no seu devido lugar */
-		if(solve[1] <= solve[2]) 
-			/* Já está ordenado */
+	if(solve[0] <= solve[1] && solve[0] <= solve[2]) {
+		/* O primeiro está no seu devido lugar
+		if(solve[1] <= solve[2])
+			/* Já está ordenado
 			return;
 		else {
 			printf("2\n");
@@ -86,32 +87,31 @@ void trivialSolve(cVector *v) {
 
 	}
 }
-
+*/
 /* Troca um índice e imprime o lado do vetor */
-void swapNprint(static cVector *v, int index) {
+void swapNprint(cVector *v, int index) {
 	cVector_swap(v, index);
 	printf("%d\n", index);
 }
 
 /* Verifica se o vetor é possível de ser ordenado, antes de começar */
-int isPossible(static cVector *v, int *finalAux) {
+int isPossible(cVector *v, int *finalAux) {
 	int i;
 	char *parity;
-	
-	if(size % 2) {
+	if(v->size % 2) {
 		return true;
 	}
 	parity = (char*) malloc(v->size * sizeof(char));
 	finalAux = (int*) malloc(v->size * sizeof(int));
 	for(i = 0; i < v->size; i++) {
-		aux[i] = v[i];
+		finalAux[i] = v->v[i];
 		parity[i] = i % 2;
 	}
 	/* MergeSort com os dois vetores: Tudo que se fizer no vetor aux,
 	   se faz no vetor paridade. Caso o vetor paridade, no final, não
 	   se apresente da forma 0 1 0 1 0 1..., o vetor é impossível de se
 	   ordenar e o EP acaba por aí. */
-	specialMergeSort(aux, parity, 0, size - 1);
+	specialMergeSort(finalAux, parity, 0, v->size-1);
 	for(i = 0; i < v->size; i++) {
 		if(parity[i] != (i % 2))
 			return false;
@@ -121,48 +121,58 @@ int isPossible(static cVector *v, int *finalAux) {
 
 /* Circular selection sort. */
 void selectCircular(cVector *v, int *aux) {
-	int i, j, lower, lowerI, target;
+	int i, j, next;
 	int *indexation;
-	if(n % 2) {
+	if(v->size % 2) {
 		indexation = (int*) malloc(v->size * sizeof(int));
 		indexation[0] = 0;
 		/* Acha o índice correto do vetor circular */
 		for(i = 1; i < v->size; i++) {
 			indexation[i] = nextIndex(v->size, indexation[i - 1]);
 		}
-	}	
-	else {
-		/* BUBBLE PRIMEIRO PARA OS IMPARES DEPOIS PARA OS PARES. */
-		for(i = v->size - 1; i > 0; i -= 2) {
-			for(j = 1; j < i; j += 2) {
-				if(v[j] > v[j + 2])
+		/* Bubble sort explicado no relatório. */
+		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
+			for(j = 0; j == i ; j = modulo(j + 2, v->size)) {
+				next = modulo(j + 2, v->size);
+				if(v->v[j] > v->v[next])
 					swapNprint(v, j);
 			}
 		}
-		for(i = v->size - 2; i > 0; )
 	}
+	else {
+		/* BUBBLE PRIMEIRO PARA OS IMPARES DEPOIS PARA OS PARES. */
+		for(i = v->size - 1; i > 0; i -= 2)
+			for(j = 1; j < i; j += 2)
+				if(v->v[j] > v->v[j + 2])
+					swapNprint(v, j);
+		/* BUBBLE PARA A SEGUNDA PARTE */
+		for(i = v->size - 2; i > 0; i -= 2)
+			for(j = 0; j < i; j += 2)
+				if(v->v[j] > v->v[j + 2])
+					swapNprint(v, j);
+	}
+	/* Debug */
+	cVector_debug(v, 0);
 }
 
 int main() {
-	int size, i, *aux;
+	int size, i, *aux = NULL;
 	cVector *v;
 
 	scanf("%d", &size);
 	v = cVector_create(size);
-	if(v == NULL) 
+	if(v == NULL)
 		return -1;
-	for(i = 0; i < size; i++)
-		scanf("%d", &v[i]);
+	for(i = 0; i < size; i++) {
+		scanf("%d", &(v->v[i]));
+	}
 	/* Para v <= 2 não definido */
-	if(v <= 2)
-		return 0; 
-	/* Para v == 3 trivial */
-	if(v == 3) {
-		trivialSolve(v);
+	if(v->size <= 2) {
+		printf("v->size < 3: %d\n", v->size);
 		return 0;
 	}
 	if(isPossible(v, aux)) {
-		
+		selectCircular(v, aux);
 	}
 	else
 		printf("Impossivel\n");

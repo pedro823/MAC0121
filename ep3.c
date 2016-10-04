@@ -88,6 +88,7 @@ void trivialSolve(cVector *v) {
 	}
 }
 */
+
 /* Troca um índice e imprime o lado do vetor */
 void swapNprint(cVector *v, int index) {
 	cVector_swap(v, index);
@@ -124,9 +125,11 @@ int isPossible(cVector *v, int *finalAux) {
 	return true;
 }
 
-/* Circular selection sort. */
+/* Selection sort circular para vetores de n ímpares, e bubble sort
+ 	para n pares. Recebe o vetor circular v, desordenado, e
+	seu vetor auxiliar, aux, ordenado. Troca e imprime o indice mexido */
 void selectCircular(cVector *v, int *aux) {
-	int i, j, next;
+	int i, j, x;
 	int *indexation;
 	printf("selectCircular\n");
 	if(v->size % 2) {
@@ -136,7 +139,19 @@ void selectCircular(cVector *v, int *aux) {
 		for(i = 1; i < v->size; i++) {
 			indexation[i] = nextIndex(v->size, indexation[i - 1]);
 		}
-		/* Bubble sort explicado no relatório. */
+		printf("\tindexados todos os numeros\n");
+		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
+			printf("\t\titerando para i = %d", i);
+			/* x recebe o representante de i no vetor ordenado, ou seja,
+			   recebe o valor do elemento que deve estar na posição i */
+			x = aux[i];
+			for(j = 0; j < v->size && v->v[j] != x; j++);
+			/* Agora j contém o indice onde x está. */
+			for(; j != i; j = modulo(j + 2, v->size))
+				swapNprint(v, j);
+			/* Agota j foi trocado para o local onde deve estar. */
+		}
+		/* Bubble sort explicado no relatório.
 		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
 			printf("\tIterating for i = %d\n", i);
 			j = 0;
@@ -150,6 +165,7 @@ void selectCircular(cVector *v, int *aux) {
 				}
 			}
 		}
+		*/
 	}
 	else {
 		/* BUBBLE PRIMEIRO PARA OS IMPARES DEPOIS PARA OS PARES. */

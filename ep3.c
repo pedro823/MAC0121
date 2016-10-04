@@ -43,12 +43,9 @@ void specialMerge(int *aux, char *parity, int ini, int mid, int fim) {
 	que deve fazer no aux, no parity também. Para auxiliar na checagem
 	de paridade do vetor. */
 void specialMergeSort(int *aux, char *parity, int ini, int fim) {
-	printf("specialMergeSort:\n");
 	int mid;
 	if(ini >= fim) return;
 	mid = (ini + fim) / 2;
-	printf("\tini = %d\n\tfim = %d", ini, fim);
-	printf("\tmid = %d\n", mid);
 	specialMergeSort(aux, parity, ini, mid);
 	specialMergeSort(aux, parity, mid + 1, fim);
 	specialMerge(aux, parity, ini, mid, fim);
@@ -111,13 +108,12 @@ int isPossible(cVector *v, int *finalAux) {
 		finalAux[i] = v->v[i];
 		parity[i] = i % 2;
 	}
-	printf("\tallocated parity and assigned values\n");
 	/* MergeSort com os dois vetores: Tudo que se fizer no vetor aux,
 	   se faz no vetor paridade. Caso o vetor paridade, no final, não
 	   se apresente da forma 0 1 0 1 0 1..., o vetor é impossível de se
 	   ordenar e o EP acaba por aí. */
 	specialMergeSort(finalAux, parity, 0, v->size-1);
-	printf("isPossible:\n\tback from MergeSort");
+	printf("\tback from MergeSort\n");
 	printf("\tvector:\n\t");
 	for(i = 0; i < v->size; i++)
 		printf("%d ", finalAux[i]);
@@ -142,10 +138,16 @@ void selectCircular(cVector *v, int *aux) {
 		}
 		/* Bubble sort explicado no relatório. */
 		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
-			for(j = 0; j == i ; j = modulo(j + 2, v->size)) {
+			printf("\tIterating for i = %d\n", i);
+			j = 0;
+			for(j = 0; j != i; j = modulo(j + 2, v->size)) {
+				printf("\t\tj = %d\n", j);
 				next = modulo(j + 2, v->size);
-				if(v->v[j] > v->v[next])
+				printf("\t\tnext = %d\n", next);
+				printf("\t\tv[j] = %d\n\t\tv[next] = %d\n", v->v[i], v->v[j]);
+				if(v->v[j] > v->v[next]) {
 					swapNprint(v, j);
+				}
 			}
 		}
 	}

@@ -99,9 +99,6 @@ void swapNprint(cVector *v, int index) {
 int isPossible(cVector *v, int *finalAux) {
 	int i;
 	char *parity;
-	if(v->size % 2) {
-		return true;
-	}
 	printf("isPossible:\n");
 	parity = (char*) malloc(v->size * sizeof(char));
 	finalAux = (int*) malloc(v->size * sizeof(int));
@@ -118,6 +115,11 @@ int isPossible(cVector *v, int *finalAux) {
 	printf("\tvector:\n\t");
 	for(i = 0; i < v->size; i++)
 		printf("%d ", finalAux[i]);
+	/* Retorna verdade se for n impar, sempre ordenável */
+	if(v->size % 2) {
+		printf("\n\tv %% 2\n");
+		return true;
+	}
 	for(i = 0; i < v->size; i++) {
 		if(parity[i] != (i % 2))
 			return false;
@@ -135,37 +137,23 @@ void selectCircular(cVector *v, int *aux) {
 	if(v->size % 2) {
 		indexation = (int*) malloc(v->size * sizeof(int));
 		indexation[0] = 0;
-		/* Acha o índice correto do vetor circular */
+		/* Acha o índice correto do vetor circular
 		for(i = 1; i < v->size; i++) {
 			indexation[i] = nextIndex(v->size, indexation[i - 1]);
 		}
+		*/
 		printf("\tindexados todos os numeros\n");
+		/* selectionSort do maior pro menor */
 		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
-			printf("\t\titerando para i = %d", i);
-			/* x recebe o representante de i no vetor ordenado, ou seja,
-			   recebe o valor do elemento que deve estar na posição i */
-			x = aux[i];
-			for(j = 0; j < v->size && v->v[j] != x; j++);
-			/* Agora j contém o indice onde x está. */
-			for(; j != i; j = modulo(j + 2, v->size))
+			printf("i = %d\n", i);
+			printf("aux[i] = %d", aux[i]);
+			for(j = 0; j < v->size && v->v[j] != aux[i]; j++)
+				printf(".");
+			printf("Achado j = %d, v[j] = %d\n", j, v->v[j]);
+			for(; j != i; j = modulo(j + 2, v->size)) {
 				swapNprint(v, j);
-			/* Agota j foi trocado para o local onde deve estar. */
-		}
-		/* Bubble sort explicado no relatório.
-		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
-			printf("\tIterating for i = %d\n", i);
-			j = 0;
-			for(j = 0; j != i; j = modulo(j + 2, v->size)) {
-				printf("\t\tj = %d\n", j);
-				next = modulo(j + 2, v->size);
-				printf("\t\tnext = %d\n", next);
-				printf("\t\tv[j] = %d\n\t\tv[next] = %d\n", v->v[i], v->v[j]);
-				if(v->v[j] > v->v[next]) {
-					swapNprint(v, j);
-				}
 			}
 		}
-		*/
 	}
 	else {
 		/* BUBBLE PRIMEIRO PARA OS IMPARES DEPOIS PARA OS PARES. */

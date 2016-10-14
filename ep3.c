@@ -99,9 +99,7 @@ void swapNprint(cVector *v, int index) {
 int isPossible(cVector *v, int *finalAux) {
 	int i;
 	char *parity;
-	printf("isPossible:\n");
 	parity = (char*) malloc(v->size * sizeof(char));
-	finalAux = (int*) malloc(v->size * sizeof(int));
 	for(i = 0; i < v->size; i++) {
 		finalAux[i] = v->v[i];
 		parity[i] = i % 2;
@@ -111,13 +109,8 @@ int isPossible(cVector *v, int *finalAux) {
 	   se apresente da forma 0 1 0 1 0 1..., o vetor é impossível de se
 	   ordenar e o EP acaba por aí. */
 	specialMergeSort(finalAux, parity, 0, v->size-1);
-	printf("\tback from MergeSort\n");
-	printf("\tvector:\n\t");
-	for(i = 0; i < v->size; i++)
-		printf("%d ", finalAux[i]);
 	/* Retorna verdade se for n impar, sempre ordenável */
 	if(v->size % 2) {
-		printf("\n\tv %% 2\n");
 		return true;
 	}
 	for(i = 0; i < v->size; i++) {
@@ -133,23 +126,25 @@ int isPossible(cVector *v, int *finalAux) {
 void selectCircular(cVector *v, int *aux) {
 	int i, j, x;
 	int *indexation;
-	printf("selectCircular\n");
+	for(i = 0; i < v->size; i++) printf("%d ", v->v[i]);
+	printf("\nselectCircular\n");
 	if(v->size % 2) {
+		/*
 		indexation = (int*) malloc(v->size * sizeof(int));
 		indexation[0] = 0;
-		/* Acha o índice correto do vetor circular
+		Acha o índice correto do vetor circular
 		for(i = 1; i < v->size; i++) {
 			indexation[i] = nextIndex(v->size, indexation[i - 1]);
 		}
 		*/
-		printf("\tindexados todos os numeros\n");
 		/* selectionSort do maior pro menor */
+		printf("v->size = %d", v->size);
+		for(i = 0; i < v->size; i++) {
+			printf("%d: ", i);
+			printf("%d\n", aux[i]);
+		}
 		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
-			printf("i = %d\n", i);
-			printf("aux[i] = %d", aux[i]);
-			for(j = 0; j < v->size && v->v[j] != aux[i]; j++)
-				printf(".");
-			printf("Achado j = %d, v[j] = %d\n", j, v->v[j]);
+			for(j = 0; j < v->size && v->v[j] != aux[i]; j++);
 			for(; j != i; j = modulo(j + 2, v->size)) {
 				swapNprint(v, j);
 			}
@@ -187,6 +182,7 @@ int main() {
 		printf("v->size < 3: %d\n", v->size);
 		return 0;
 	}
+	aux = malloc(v->size * sizeof(int));
 	if(isPossible(v, aux)) {
 		selectCircular(v, aux);
 	}

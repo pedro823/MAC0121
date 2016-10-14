@@ -72,7 +72,7 @@ int modulo(int n, int m) {
 /* Troca um índice e imprime o lado do vetor */
 void swapNprint(cVector *v, int index) {
 	cVector_swap(v, index);
-	printf("%d\n", index);
+	/*printf("%d\n", index);*/
 }
 
 /* Verifica se o vetor é possível de ser ordenado, antes de começar */
@@ -160,6 +160,7 @@ int main() {
 	}
 	else
 		printf("Impossivel\n");
+	free(aux);
 	cVector_destroy(v);
 	return 0;
 }

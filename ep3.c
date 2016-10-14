@@ -69,26 +69,6 @@ int modulo(int n, int m) {
 	return n % m;
 }
 
-/* Resolve um vetor de tamanho 3 */
-/*
-void trivialSolve(cVector *v) {
-	int *solve = v->v;
-	if(solve[0] <= solve[1] && solve[0] <= solve[2]) {
-		/* O primeiro está no seu devido lugar
-		if(solve[1] <= solve[2])
-			/* Já está ordenado
-			return;
-		else {
-			printf("2\n");
-			return;
-		}
-	}
-	else if(solve[0] <= solve[1]) {
-
-	}
-}
-*/
-
 /* Troca um índice e imprime o lado do vetor */
 void swapNprint(cVector *v, int index) {
 	cVector_swap(v, index);
@@ -124,10 +104,7 @@ int isPossible(cVector *v, int *finalAux) {
  	para n pares. Recebe o vetor circular v, desordenado, e
 	seu vetor auxiliar, aux, ordenado. Troca e imprime o indice mexido */
 void selectCircular(cVector *v, int *aux) {
-	int i, j, x;
-	int *indexation;
-	for(i = 0; i < v->size; i++) printf("%d ", v->v[i]);
-	printf("\nselectCircular\n");
+	int i, j;
 	if(v->size % 2) {
 		/*
 		indexation = (int*) malloc(v->size * sizeof(int));
@@ -138,11 +115,6 @@ void selectCircular(cVector *v, int *aux) {
 		}
 		*/
 		/* selectionSort do maior pro menor */
-		printf("v->size = %d", v->size);
-		for(i = 0; i < v->size; i++) {
-			printf("%d: ", i);
-			printf("%d\n", aux[i]);
-		}
 		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
 			for(j = 0; j < v->size && v->v[j] != aux[i]; j++);
 			for(; j != i; j = modulo(j + 2, v->size)) {

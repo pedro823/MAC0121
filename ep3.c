@@ -13,7 +13,7 @@ void specialMerge(int *aux, char *parity, int ini, int mid, int fim) {
 	res = (int*) malloc((fim - ini + 1) * sizeof(int));
 	resParity = (char*) malloc((fim - ini + 1) * sizeof(int));
 	while(i <= mid && j <= fim) {
-		if(aux[i] < aux[j]) {
+		if(aux[i] <= aux[j]) {
 			res[k] = aux[i];
 			resParity[k++] = parity[i++];
 		}

@@ -72,7 +72,7 @@ int modulo(int n, int m) {
 /* Troca um índice e imprime o lado do vetor */
 void swapNprint(cVector *v, int index) {
 	cVector_swap(v, index);
-	/*printf("%d\n", index);*/
+	printf("%d\n", index);
 }
 
 /* Verifica se o vetor é possível de ser ordenado, antes de começar */
@@ -135,7 +135,8 @@ void selectCircular(cVector *v, int *aux) {
 					swapNprint(v, j);
 	}
 	/* Debug */
-	cVector_debug(v, 0);
+	/* cVector_debug(v, 0); */
+	/* Descomente essa linha para imprimir o vetor ordenado! */
 }
 
 int main() {
@@ -159,7 +160,7 @@ int main() {
 		selectCircular(v, aux);
 	}
 	else
-		printf("Impossivel\n");
+		printf("Nao e possivel\n");
 	free(aux);
 	cVector_destroy(v);
 	return 0;

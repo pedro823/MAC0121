@@ -106,14 +106,6 @@ int isPossible(cVector *v, int *finalAux) {
 void selectCircular(cVector *v, int *aux) {
 	int i, j;
 	if(v->size % 2) {
-		/*
-		indexation = (int*) malloc(v->size * sizeof(int));
-		indexation[0] = 0;
-		Acha o índice correto do vetor circular
-		for(i = 1; i < v->size; i++) {
-			indexation[i] = nextIndex(v->size, indexation[i - 1]);
-		}
-		*/
 		/* selectionSort do maior pro menor */
 		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
 			for(j = 0; j < v->size && v->v[j] != aux[i]; j++);

@@ -1,0 +1,27 @@
+Calculo de n par:
+    isPossible:
+        malloc = O(1)
+            +
+        inicializar dois vetores = O(n)
+            +
+        mergeSort = O(n log n)
+    selectCircular:
+        bubbleSort = O(n^2)
+            +
+        bubbleSort = O(n^2)
+
+    Best case: O(n log n) [mergeSort]
+    Average case: O(n^2)  [bubbleSort]
+    Worst case: O(n^2)    [bubbleSort]
+
+Calculo de n impar:
+    isPossible:
+        malloc = O(1)
+            +
+        inicializar dois vetores = O(n)
+            +
+        mergeSort = O(n log n)
+    selectCircular:
+        selectionSort modificado:
+            percorrer o vetor, toda casa: O(n)
+                    *

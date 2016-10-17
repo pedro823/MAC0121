@@ -19,6 +19,7 @@ cVector *cVector_create(int size) {
 }
 
 void cVector_destroy(cVector *vector) {
+	free(vector->noRepeat)
 	free(vector->v);
 	free(vector);
 }

@@ -34,4 +34,9 @@ Calculo de n impar:
     Average case: O(n^2) [selectionSort modificado]
     Worst case: O(n^2)
 
+Prova de corretude de n impar:
+    Então, o vetor pode ser iterado de trás para frente apenas por aplicar a função inversa
+    de índice múltiplas vezes. Assim, colocar o elemento certo em um local que não será mais acessado
+    se torna simples: é apenas necessário 
+
 60k test: 41.637s real time

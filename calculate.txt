@@ -10,9 +10,9 @@ Calculo de n par:
             +
         bubbleSort = O(n^2)
 
-    Best case: O(n log n) [mergeSort]
+    Best case: vetor ordenado O(n log n) [mergeSort]
     Average case: O(n^2)  [bubbleSort]
-    Worst case: O(n^2)    [bubbleSort]
+    Worst case: vetor invertido O(n^2)    [bubbleSort]
 
 Calculo de n impar:
     isPossible:
@@ -23,5 +23,13 @@ Calculo de n impar:
         mergeSort = O(n log n)
     selectCircular:
         selectionSort modificado:
-            percorrer o vetor, toda casa: O(n)
+            percorrer o vetor, toda casa = O(n)
                     *
+                (achar um elemento em um vetor desordenado = O(n)
+                        +
+                mover um elemento até sua posição usando 3-reversão = O(n))
+            = O(n) * O(n) = O(n^2)
+
+    Best case: Vetor ordenado O(n^2) [selectionSort modificado]
+    Average case: O(n^2) [selectionSort modificado]
+    Worst case: O(n^2)

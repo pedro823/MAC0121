@@ -108,10 +108,14 @@ void selectCircular(cVector *v, int *aux) {
 	if(v->size % 2) {
 		/* selectionSort do maior pro menor */
 		for(i = v->size - 2; i > 0; i = modulo(i - 2, v->size)) {
-			for(j = 0; j < v->size && v->v[j] != aux[i]; j++);
+			for(j = 0; j < v->size; j++) {
+				if(v->v[j] == aux[i] && !(v->noRepeat[j]))
+					break;
+			}
 			for(; j != i; j = modulo(j + 2, v->size)) {
 				swapNprint(v, j);
 			}
+			v->noRepeat[j] = 1;
 		}
 	}
 	else {
@@ -134,11 +138,12 @@ void selectCircular(cVector *v, int *aux) {
 int main() {
 	int size, i, *aux = NULL;
 	cVector *v;
-
 	scanf("%d", &size);
 	v = cVector_create(size);
 	if(v == NULL)
 		return -1;
+	for(i = 0; i < v->size; i++)
+		v->noRepeat[i] = 0;
 	for(i = 0; i < size; i++) {
 		scanf("%d", &(v->v[i]));
 	}

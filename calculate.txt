@@ -34,4 +34,4 @@ Calculo de n impar:
     Average case: O(n^2) [selectionSort modificado]
     Worst case: O(n^2)
 
-60k test: 41.068s real time
+60k test: 41.637s real time

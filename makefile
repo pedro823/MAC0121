@@ -2,7 +2,7 @@
 DELETE_ON_ERROR:
 $(CC)=gcc
 CFLAGS=-Wall -ansi -pedantic -O2
-ep3: circularVector.o ep3.o
+ep3: circularVector.o tresReversao.o
 	$(CC) -o $@ $^ $(CFLAGS)
 	rm -f *.o *.gch
 
@@ -13,8 +13,8 @@ ep3debug: circularVector.o ep3.o
 circularVector.o: circularVector.h circularVector.c
 	$(CC) $^ $(CFLAGS) -c
 
-ep3.o: ep3.c
+tresReversao.o: tresReversao.c
 	$(CC) $^ $(CFLAGS) -c
 
 clean:
-	rm -f *.o *.gch ep3 ep3debug
+	rm -f *.o *.gch ep3 ep3debug out.txt out

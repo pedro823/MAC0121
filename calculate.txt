@@ -33,3 +33,5 @@ Calculo de n impar:
     Best case: Vetor ordenado O(n^2) [selectionSort modificado]
     Average case: O(n^2) [selectionSort modificado]
     Worst case: O(n^2)
+
+60k test: 41.068s real time

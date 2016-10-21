@@ -11,11 +11,15 @@ cVector *cVector_create(int size) {
 	res->v = malloc(size * sizeof(int));
 	if(res->v == NULL)
 		return NULL;
+	res->noRepeat = malloc(size * sizeof(char));
+	if(res->noRepeat == NULL)
+		return NULL;
 	res->size = size;
 	return res;
 }
 
 void cVector_destroy(cVector *vector) {
+	free(vector->noRepeat)
 	free(vector->v);
 	free(vector);
 }
@@ -26,6 +30,9 @@ int cVector_swap(cVector *vector, int index) {
 	temp = vector->v[index % size];
 	vector->v[index % size] = vector->v[(index + 2) % size];
 	vector->v[(index + 2) % size] = temp;
+	temp = vector->noRepeat[index % size];
+	vector->noRepeat[index % size] = vector->noRepeat[(index + 2) % size];
+	vector->noRepeat[(index + 2) % size] = temp;
 	return(index % size);
 }
 

@@ -1,0 +1,42 @@
+Calculo de n par:
+    isPossible:
+        malloc = O(1)
+            +
+        inicializar dois vetores = O(n)
+            +
+        mergeSort = O(n log n)
+    selectCircular:
+        bubbleSort = O(n^2)
+            +
+        bubbleSort = O(n^2)
+
+    Best case: vetor ordenado O(n log n) [mergeSort]
+    Average case: O(n^2)  [bubbleSort]
+    Worst case: vetor invertido O(n^2)    [bubbleSort]
+
+Calculo de n impar:
+    isPossible:
+        malloc = O(1)
+            +
+        inicializar dois vetores = O(n)
+            +
+        mergeSort = O(n log n)
+    selectCircular:
+        selectionSort modificado:
+            percorrer o vetor, toda casa = O(n)
+                    *
+                (achar um elemento em um vetor desordenado = O(n)
+                        +
+                mover um elemento até sua posição usando 3-reversão = O(n))
+            = O(n) * O(n) = O(n^2)
+
+    Best case: Vetor ordenado O(n^2) [selectionSort modificado]
+    Average case: O(n^2) [selectionSort modificado]
+    Worst case: O(n^2)
+
+Prova de corretude de n impar:
+    Então, o vetor pode ser iterado de trás para frente apenas por aplicar a função inversa
+    de índice múltiplas vezes. Assim, colocar o elemento certo em um local que não será mais acessado
+    se torna simples: é apenas necessário 
+
+60k test: 41.637s real time

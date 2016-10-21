@@ -7,6 +7,7 @@
 typedef struct {
 	int *v;
 	int size;
+	char *noRepeat;
 } cVector;
 
 /* Cria e retorna um ponteiro de um
@@ -25,7 +26,7 @@ void cVector_destroy(cVector *vector);
    o tamanho do vetor.			*/
 int cVector_swap(cVector *vector, int index);
 
-/* Imprime o vetor, utilizado em debug. 
+/* Imprime o vetor, utilizado em debug.
    a variavel mode pode assumir 0 ou um index.
    Caso 0, imprime o vetor inteiro.
    Caso index, imprime o valor do índice do vetor */

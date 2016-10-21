@@ -1,5 +1,5 @@
 .PHONY=clean
-DELETE_ON_ERROR:
+.DELETE_ON_ERROR:
 $(CC)=gcc
 CFLAGS=-Wall -ansi -pedantic -O2
 ep3: circularVector.o ep3.o

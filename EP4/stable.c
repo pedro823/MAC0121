@@ -96,5 +96,13 @@ Result stable_insert(STable table, char* type, char mode, char* key) {
 }
 
 void stable_destroy(STable table, char* type) {
+    if(strcmp(type, "VD") == 0 || strcmp(type, "VO") == 0) {
 
+    }
+    else if(strcmp(type, "LD") == 0 || strcmp(type, "LO") == 0) {
+
+    }
+    else {
+
+    }
 }

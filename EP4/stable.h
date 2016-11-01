@@ -14,6 +14,11 @@ typedef union {
 } Entry;
 
 typedef struct {
+    char* key;
+    Entry data;
+} TableEntry;
+
+typedef struct {
     bool new;
     int* data;
 } Result;

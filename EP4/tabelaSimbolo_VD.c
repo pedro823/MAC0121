@@ -11,7 +11,7 @@ STable stable_create_vd() {
     return new;
 }
 
-void stable_reallocate(STable table) {
+void stable_reallocate_vd(STable table) {
     STable new;
     int i;
     new = (STable) malloc(sizeof(struct stable_s));
@@ -37,7 +37,7 @@ Result stable_insert_vd(STable table, char* key) {
         }
     }
     if(table->top == table->max)
-        stable_reallocate(table);
+        stable_reallocate_vd(table);
     table->vector[table->top].key = key;
     table->vector[table->top].data = 0;
     ret.new = 1;

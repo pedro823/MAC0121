@@ -95,6 +95,10 @@ Result stable_insert(STable table, char* type, char mode, char* key) {
     else if()
 }
 
+int* stable_find(STable table, const char* type, const char mode, char* key) {
+
+}
+
 void stable_destroy(STable table, char* type) {
     if(strcmp(type, "VD") == 0 || strcmp(type, "VO") == 0) {
 

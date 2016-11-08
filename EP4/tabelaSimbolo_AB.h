@@ -3,19 +3,19 @@
 #include "stable.h"
 
 struct stable_s {
-    int data;
-    struct stable_s* hi;
-    struct stable_s* lo;
+    TableEntry data;
+    struct stable_ab* hi;
+    struct stable_ab* lo;
 };
 
 STable stable_create_ab();
 
-Result stable_insert_ab(STable table, char* key);
+Result stable_insert_ab(STable root, char* key);
 
-int* stable_find_ab(STable table, char* key);
+int* stable_find_ab(STable root, char* key);
 
-void stable_destroy_ab(STable table);
+void stable_destroy_ab(STable root);
 
-void stable_print_ab(STable table, const char mode);
+void stable_print_ab(STable root, const char mode);
 
 #endif

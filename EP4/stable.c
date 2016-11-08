@@ -18,7 +18,7 @@ STable stable_create(const char* type, const char mode) {
     stable_create_ab();
 }
 
-Result stable_insert(STable table, const char* type, const char mode, char* key) {
+int* stable_insert(STable table, const char* type, const char mode, char* key) {
     if(strcmp(type, "VD") == 0)
         return stable_insert_vd(table, key);
     else if(strcmp(type, "VO") == 0)

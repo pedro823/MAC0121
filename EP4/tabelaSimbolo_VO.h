@@ -2,11 +2,6 @@
 #define __TABELASIMBOLO_VO__
 #include "stable.h"
 
-struct stable_s {
-    TableEntry* vector;
-    int max, top;
-};
-
 STable stable_create_vo();
 
 Result stable_insert_vo(STable table, char* key);

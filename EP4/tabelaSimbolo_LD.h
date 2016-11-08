@@ -2,14 +2,10 @@
 #define __TABELASIMBOLO_LD__
 #include "stable.h"
 
-struct stable_s {
-    TableEntry data;
-    struct stable_s* next;
-}
 
 STable stable_create_ld();
 
-Result stable_insert_ld(STable table, char* key);
+Result stable_insert_ld(STable* table, char* key);
 
 int* stable_find_ld(STable table, char* key);
 

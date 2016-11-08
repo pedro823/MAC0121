@@ -2,10 +2,6 @@
 #define __TABELASIMBOLO_VD__
 #include "stable.h"
 
-struct stable_s {
-    TableEntry* vector;
-    int max, top;
-};
 
 STable stable_create_vd();
 

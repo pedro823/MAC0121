@@ -14,23 +14,23 @@ Result stable_insert_lo(STable* table, char* key) {
     if((*table) != NULL) {
         i = (*table);
         ant = NULL;
-        while(i != NULL) {
-            if(strcmp(i->data.key, key) == 0) {
+        while(i.l != NULL) {
+            if(strcmp(i.l->data.key, key) == 0) {
                 ret.new = 0;
-                ret.data = &(i->data.data);
+                ret.data = &(i.l->data.data);
                 return ret;
             }
             /* Inserir no lugar */
-            else if(strcmp(i->data.key, key) > 0)
+            else if(strcmp(i.l->data.key, key) > 0)
                 break;
             ant = i;
-            i = i->next;
+            i = i.l->next;
         }
         /* Se chegou aqui, é para inserir entre ant e i */
         new = (STable) malloc(sizeof(struct stable_s));
-        new->next = i;
-        new->data.key = key;
-        new->data.data = 0;
+        new.l->next = i;
+        new.l->data.key = key;
+        new.l->data.data = 0;
         /* Se ant == NULL, é para inserir no começo */
         if(ant == NULL)
             (*table) = new;
@@ -42,20 +42,20 @@ Result stable_insert_lo(STable* table, char* key) {
     }
     /* Insere no começo */
     new = (STable) malloc(sizeof(struct stable_s));
-    new->next = NULL;
-    new->data.key = key;
-    new->data.data = 0;
+    new.l->next = NULL;
+    new.l->data.key = key;
+    new.l->data.data = 0;
     (*table) = new;
     ret.new = 1;
-    ret.data = &(new->data.data);
+    ret.data = &(new.l->data.data);
     return ret;
 }
 
 int* stable_find_lo(STable table, const char* key) {
     STable i;
-    for(i = table; i != NULL && strcmp(i->data.key, key) < 0; i = i->next);
-    if(i != NULL && strcmp(i->data.key, key) == 0)
-        return &(i->data.data);
+    for(i = table; i.l != NULL && strcmp(i.l->data.key, key) < 0; i = i.l->next);
+    if(i.l != NULL && strcmp(i.l->data.key, key) == 0)
+        return &(i.l->data.data);
     return NULL;
 }
 

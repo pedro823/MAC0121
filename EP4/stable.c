@@ -1,112 +1,67 @@
 #include "stable.h"
-#include <stdlib.h>
-#include <stdio.h>
 #include "tabelaSimbolo_AB.h"
 #include "tabelaSimbolo_LD.h"
 #include "tabelaSimbolo_LO.h"
 #include "tabelaSimbolo_VD.h"
 #include "tabelaSimbolo_VO.h"
+#include <string.h>
 
-typedef union {
-    TableEntry* vector;
-    struct stable_s* next;
-    struct stable_s* hi, lo;
-} vec_ll;
-
-struct stable_s {
-    vec_ll operator;
-    TableEntry ll_data;
-    int top, max;
-};
-
-
-STable stable_create_vector() {
-    STable new;
-    new = (STable) malloc(sizeof(stable_s));
-    new->operator.vector = (TableEntry*) malloc(1024 * sizeof(TableEntry));
-    new->top = 0;
-    new->max = 1024;
-    return new;
+STable stable_create(const char* type, const char mode) {
+    if(strcmp(type, "VD") == 0)
+        stable_create_vd();
+    else if(strcmp(type, "VO") == 0)
+        stable_create_vo();
+    else if(strcmp(type, "LD") == 0)
+        stable_create_ld();
+    else if(strcmp(type, "LO") == 0)
+        stable_create_lo();
+    stable_create_ab();
 }
 
-STable stable_create_linked_list() {
-    Stable new;
-    new = NULL;
-    return new;
+Result stable_insert(STable table, const char* type, const char mode, char* key) {
+    if(strcmp(type, "VD") == 0)
+        return stable_insert_vd(table, key);
+    else if(strcmp(type, "VO") == 0)
+        return stable_insert_vo(table, key);
+    else if(strcmp(type, "LD") == 0)
+        return stable_insert_ld(table, key);
+    else if(strcmp(type, "LO") == 0)
+        return stable_insert_lo(table, key);
+    return stable_insert_ab(table, key);
 }
 
-STable stable_create_bst() {
-    Stable new;
-    new = null;
-    return new;
+int* stable_find(STable, const char* type, const char mode, char*key) {
+    if(strcmp(type, "VD") == 0)
+        return stable_find_vd(table, key);
+    else if(strcmp(type, "VO") == 0)
+        return stable_find_vo(table, key);
+    else if(strcmp(type, "LD") == 0)
+        return stable_find_ld(table, key);
+    else if(strcmp(type, "LO") == 0)
+        return stable_find_lo(table, key);
+    return stable_find_ab(table, key);
 }
 
-Result stable_insert_vector(STable table, char* type, char mode, char* key) {
-    int i, mid, fim;
-    Result ret;
-    if(strcmp(type, "VD") == 0) {
-        for(i = 0; i < table->top; i++) {
-            if(strcmp(key, table->operator.vector[i].key) == 0) {
-                ret.new = 0;
-                ret.data = &(table->operator.vector[i].data);
-                return ret;
-            }
-        }
-        if(table->top == table->max)
-            stable_reallocate_vector(table, type);
-        table->operator.vector[table->top].key = key;
-        table->operator.vector[table->top].data = 0;
-        ret.new = 1;
-        ret.data = &(table->operator.vector[table->top].data);
-        return ret;
-    }
-    else {
-        i = 0;
-        fim = table->topo;
-        while(i < fim) {
-            mid = (table->topo)/2;
-
-
-        }
-        ret.new = 1;
-    }
+void stable_destroy(STable table, const char* type) {
+    if(strcmp(type, "VD") == 0)
+        stable_destroy_vd(table);
+    else if(strcmp(type, "VO") == 0)
+        stable_destroy_vo(table);
+    else if(strcmp(type, "LD") == 0)
+        stable_destroy_ld(table);
+    else if(strcmp(type, "LO") == 0)
+        stable_destroy_lo(table);
+    stable_destroy_ab(table);
 }
 
-STable stable_create(char* type, char mode) {
-    STable ret;
-    if(strcmp(type, "VD") == 0 || strcmp(type, "VO") == 0) {
-        ret = stable_create_vector();
-    }
-    else if(strcmp(type, "LD") == 0 || strcmp(type, "LO") == 0) {
-        ret = stable_create_linked_list();
-    }
-    else if(strcmp(type, "AB") == 0) {
-        ret = stable_create_bst();
-    }
-    else
-        return NULL;
-    return ret;
-}
-
-Result stable_insert(STable table, char* type, char mode, char* key) {
-    Result ret;
-    if(strcmp(type, "VD") == 0 || strcmp(type, "VO") == 0)
-        ret = stable_insert_vector(table, type, mode, key);
-    else if()
-}
-
-int* stable_find(STable table, const char* type, const char mode, char* key) {
-
-}
-
-void stable_destroy(STable table, char* type) {
-    if(strcmp(type, "VD") == 0 || strcmp(type, "VO") == 0) {
-
-    }
-    else if(strcmp(type, "LD") == 0 || strcmp(type, "LO") == 0) {
-
-    }
-    else {
-
-    }
+void stable_print(STable table, const char* type, const char mode) {
+    if(strcmp(type, "VD") == 0)
+        stable_print_vd(table, mode);
+    else if(strcmp(type, "VO") == 0)
+        stable_print_vo(table, mode);
+    else if(strcmp(type, "LD") == 0)
+        stable_print_ld(table, mode);
+    else if(strcmp(type, "LO") == 0)
+        stable_print_lo(table, mode);
+    stable_print_ab(table, mode);
 }

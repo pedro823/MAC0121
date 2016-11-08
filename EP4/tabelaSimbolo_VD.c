@@ -1,10 +1,12 @@
 #include "tabelaSimbolo_VO.h"
 #include "stable.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 STable stable_create_vd() {
     STable new;
-    new = (Stable) malloc(sizeof(struct stable_s));
+    new = (STable) malloc(sizeof(struct stable_s));
     new->vector = (TableEntry*) malloc(1024*sizeof(TableEntry));
     new->max = 1024;
     new->top = 0;
@@ -41,7 +43,7 @@ Result stable_insert_vd(STable table, char* key) {
     table->vector[table->top].key = key;
     table->vector[table->top].data = 0;
     ret.new = 1;
-    ret.data = &(table->vector[table->top++]);
+    ret.data = &(table->vector[table->top++].data);
     return ret;
 }
 
@@ -49,14 +51,15 @@ int* stable_find_vd(STable table, char* key) {
     int i;
     for(i = 0; i < table->top; i++) {
         if(strcmp(key, table->vector[i].key) == 0) {
-            return &(table.vector[i].data);
+            return &(table->vector[i].data);
         }
     }
     return NULL;
 }
 
-void stable_quickSort_o(STable table. int start, int end) {
+void stable_quickSort_o(STable table, int start, int end) {
     /* Ocorrências */
+    return;
 }
 
 void stable_quickSort_a(STable table, int start, int end) {
@@ -64,7 +67,7 @@ void stable_quickSort_a(STable table, int start, int end) {
     TableEntry aux;
     char* pivot;
     int i, j;
-    pivot = table->vector[ini].key;
+    pivot = table->vector[start].key;
     i = start;
     j = end;
     while(i < j) {
@@ -72,24 +75,23 @@ void stable_quickSort_a(STable table, int start, int end) {
             j--;
         while(strcmp(table->vector[i].key, pivot) < 0 && j > i)
             i++;
-        if(j > i)
-
+        if(j > i);
     }
 }
 
 void stable_print_vd(STable table, const char mode) {
     STable temp;
     int i;
-    temp = (STable) malloc(struct stable_s);
+    temp = (STable) malloc(sizeof(struct stable_s));
     temp->vector = (TableEntry*) malloc(table->top * sizeof(TableEntry));
     temp->top = table->top;
     for(i = 0; i < table->top; i++)
         temp->vector[i] = table->vector[i];
     if(mode == 'O') {
-        stable_quickSort_o(temp)
+        stable_quickSort_o(temp, 0, table->top - 1);
     }
-    else if(mode == 'A') {
-        stable_quickSort_a(temp, 0, table->top - 1)
+    else {
+        stable_quickSort_a(temp, 0, table->top - 1);
     }
     for(i = 0; i < table->top; i++) {
         printf("%s : %d", temp->vector[i].key, temp->vector[i].data);

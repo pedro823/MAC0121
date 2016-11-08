@@ -15,7 +15,7 @@ typedef union {
 */
 typedef struct {
     char* key;
-    Entry data;
+    int data;
 } TableEntry;
 
 typedef struct {
@@ -25,11 +25,11 @@ typedef struct {
 
 STable stable_create(const char* type, const char mode);
 
-Result stable_insert(STable table, char* type, char mode, char* key);
+Result stable_insert(STable table, const char* type, const char mode, char* key);
 
 int* stable_find(STable table, const char* type, const char mode, char* key);
 
-void stable_destroy(STable table, char* type);
+void stable_destroy(STable table, const char* type);
 
 void stable_print(STable table, const char* type, const char mode);
 

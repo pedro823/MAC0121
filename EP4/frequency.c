@@ -43,9 +43,9 @@ int main(int argAmount, char **argv) {
         ret = stable_insert(table, type, mode, buffer->data);
 
         if(ret.new)
-            ret.data = 1;
+            *ret.data = 1;
         else
-            ret.data++;
+            (*ret.data)++;
 
         while(!isalnum(c)) {
             c = fgetc(f);
@@ -54,6 +54,6 @@ int main(int argAmount, char **argv) {
     stable_print(table, type, mode);
     fclose(f);
     buffer_destroy(buffer);
-    stable_destroy(table);
+    stable_destroy(table, type);
     return 0;
 }

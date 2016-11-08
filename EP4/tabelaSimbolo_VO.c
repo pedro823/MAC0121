@@ -1,6 +1,8 @@
 #include "tabelaSimbolo_VO.h"
 #include "stable.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 STable stable_create_vo() {
     STable new;
@@ -11,13 +13,14 @@ STable stable_create_vo() {
     return new;
 }
 
-void STable_reallocate_vo(STable table) {
+void stable_reallocate_vo(STable table) {
     STable new;
     int i;
     new = (STable) malloc(sizeof(struct stable_s));
     new->vector = (TableEntry*) malloc(2 * table-> max * sizeof(TableEntry));
     for(i = 0; i < table->top; i++) {
-        new->vector[i] = table->top[i];
+        new->vector[i].key = table->vector[i].key;
+        new->vector[i].data = table->vector[i].data;
     }
     new->top = table->top;
     new->max = 2 * table->max;
@@ -32,7 +35,7 @@ Result stable_insert_vo(STable table, char* key) {
         mid = (ini + fim) / 2;
         res = strcmp(table->vector[mid].key, key);
         if(res == 0) {
-            ret.new = 0
+            ret.new = 0;
             ret.data = &(table->vector[mid].data);
             return ret;
         }
@@ -45,7 +48,7 @@ Result stable_insert_vo(STable table, char* key) {
     if(table->top == table->max)
         stable_reallocate_vo(table);
     /* Empurra todos os da frente para + 1 */
-    for(i = table->topo + 1; i > ini; i--) {
+    for(i = table->top + 1; i > ini; i--) {
         table->vector[i] = table->vector[i - 1];
     }
     table->vector[ini].key = key;
@@ -105,7 +108,7 @@ void stable_sort_vo_o(STable table, int ini, int fim) {
 void stable_print_vo(STable table, const char mode) {
     STable temp;
     int i;
-    if(strcmp("A", mode) == 0)
+    if(mode == 'A')
         for(i = 0; i < table->top; i++)
             printf("%s : %d\n", table->vector[i].key, table->vector[i].data);
     else {

@@ -61,4 +61,18 @@ int* stable_find_lo(STable table, const char* key) {
 
 void stable_destroy_lo(STable table) {
     STable i, next;
+    for(i = table; i != NULL; i = next) {
+        next = i.l->next;
+        free(i);
+    }
+}
+
+void stable_print_lo(STable table, const char mode) {
+    STable i;
+    if(mode == 'A')
+        for(i = table; i != NULL; i = i.l->next)
+            printf("%s : %d\n", i.l->data.key, i.l->data.data);
+    else {
+
+    }
 }

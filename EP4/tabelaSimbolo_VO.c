@@ -75,7 +75,7 @@ int* stable_find_vo(STable table, char* key) {
 }
 
 void stable_merge_vo_o(STable table, int ini, int mid, int fim) {
-    int i = 0, j = mid + 1, k = 0, res;
+    int i = ini, j = mid + 1, k = 0, res;
     STable aux;
     aux = (STable) malloc(sizeof(struct stable_v));
     aux->vector = (TableEntry*) malloc((fim - ini + 1) * sizeof(TableEntry));
@@ -91,7 +91,7 @@ void stable_merge_vo_o(STable table, int ini, int mid, int fim) {
     while(j <= fim)
         aux.v->vector[k++] = table.v->vector[j++];
     for(i = ini; i <= fim; i++)
-        table.v->vector[i] = aux.v->vector[i];
+        table.v->vector[i] = aux.v->vector[i - ini];
     stable_destroy_vo(aux);
 }
 

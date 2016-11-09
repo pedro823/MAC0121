@@ -13,6 +13,12 @@ STable stable_create_vd() {
     return new;
 }
 
+
+void stable_destroy_vd(STable table) {
+    free(table->vector);
+    free(table);
+}
+
 void stable_reallocate_vd(STable table) {
     STable new;
     int i;
@@ -56,14 +62,76 @@ int* stable_find_vd(STable table, char* key) {
     }
     return NULL;
 }
-
+/*
 void stable_quickSort_o(STable table, int start, int end) {
-    /* Ocorrências */
     return;
 }
+*/
 
+void stable_merge_o(STable table, int start, int mid, int end) {
+    int i = start, j = mid + 1, k = 0, aux;
+    STable aux;
+    aux = (STable) malloc(sizeof(struct stable_v));
+    aux.v->vector = (STable) malloc((end - start + 1) * sizeof(TableEntry));
+    while(i <= mid && j <= end) {
+        if(table.v->vector[i].data <= table.v->vector[j].data)
+            aux.v->vector[k++] = table.v->vector[i++];
+        else
+            aux.v->vector[k++] = table.v->vector[j++];
+    }
+    while(i <= mid)
+        aux.v->vector[k++] = table.v->vector[i++];
+    while(j <= end)
+        aux.v->vector[k++] = table.v->vector[j++];
+    for(i = start; i <= end; i++)
+        table.v->vector[i] = aux.v->vector[i - ini];
+    stable_destroy_vd(aux);
+}
+
+void stable_sort_o(STable table, int start, int end) {
+    int mid;
+    if(start < end) {
+        mid = (start + end) / 2;
+        stable_sort_o(table, start, mid);
+        stable_sort_o(table, mid + 1, end);
+        stable_merge_o(table, start, mid, end);
+    }
+}
+
+void stable_merge_a(STable table, int start, int mid, int end) {
+    int i = start, j = mid + 1, k = 0, aux;
+    STable aux;
+    aux = (STable) malloc(sizeof(struct stable_v));
+    aux.v->vector = (STable) malloc((end - start + 1) * sizeof(TableEntry));
+    while(i <= mid && j <= end) {
+        if(strcmp(table.v->vector[i].key, table.v->vector[j].key) <= 0)
+            /* ptr1 is smaller */
+            aux.v->vector[k++] = table.v->vector[i++];
+        else
+            /* ptr2 is smaller */
+            aux.v->vector[k++] = table.v->vector[j++];
+    }
+    while(i <= mid)
+        aux.v->vector[k++] = table.v->vector[i++];
+    while(j <= end)
+        aux.v->vector[k++] = table.v->vector[j++];
+    for(i = start; i <= end; i++)
+        table.v->vector[i] = aux.v->vector[i - ini];
+    stable_destroy_vd(aux);
+}
+
+void stable_sort_a(STable table, int start, int end) {
+    int mid;
+    if(start < end) {
+        mid = (start + end) / 2;
+        stable_sort_a(table, start, mid);
+        stable_sort_a(table, mid + 1, end);
+        stable_merge_a(table, ini, mid, end);
+    }
+}
+
+/*
 void stable_quickSort_a(STable table, int start, int end) {
-    /* Alfabética */
     TableEntry aux;
     char* pivot;
     int i, j;
@@ -78,6 +146,7 @@ void stable_quickSort_a(STable table, int start, int end) {
         if(j > i);
     }
 }
+*/
 
 void stable_print_vd(STable table, const char mode) {
     STable temp;
@@ -88,17 +157,13 @@ void stable_print_vd(STable table, const char mode) {
     for(i = 0; i < table->top; i++)
         temp.v->vector[i] = table.v->vector[i];
     if(mode == 'O') {
-        stable_quickSort_o(temp, 0, table->top - 1);
+        stable_sort_o(temp, 0, table->top - 1);
     }
     else {
-        stable_quickSort_a(temp, 0, table->top - 1);
+        stable_sort_a(temp, 0, table->top - 1);
     }
     for(i = 0; i < table->top; i++) {
         printf("%s : %d", temp.v->vector[i].key, temp.v->vector[i].data);
     }
-}
-
-void stable_destroy_vd(STable table) {
-    free(table->vector);
-    free(table);
+    stable_destroy_vd(temp);
 }

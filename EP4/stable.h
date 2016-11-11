@@ -43,6 +43,11 @@ struct stable_ab {
     struct stable_ab* hi;
 };
 
+typedef struct SORT_VEC {
+    TableEntry* vec;
+    int top, max;
+} sortVector;
+
 STable stable_create(const char* type, const char mode);
 
 Result stable_insert(STable table, const char* type, const char mode, char* key);

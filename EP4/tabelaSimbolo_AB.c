@@ -1,4 +1,6 @@
 #include "tabelaSimbolo_AB.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 STable stable_create_ab() {
     return NULL;

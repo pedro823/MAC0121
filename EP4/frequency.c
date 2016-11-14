@@ -15,7 +15,7 @@ void printError(int errno) {
 }
 
 int main(int argAmount, char **argv) {
-    char* type, file;
+    char* type;
     char c, mode;
     STable table;
     Buffer* buffer;
@@ -30,6 +30,7 @@ int main(int argAmount, char **argv) {
         printError(0);
         return -1;
     }
+    fprintf(stderr, "Opened file\n");
     type = argv[2];
     mode = *(argv[3]);
     table = stable_create(type, mode);
@@ -40,20 +41,30 @@ int main(int argAmount, char **argv) {
             buffer_push_back(buffer, tolower(c));
             c = fgetc(f);
         }
-        ret = stable_insert(table, type, mode, buffer->data);
-
-        if(ret.new)
+        fprintf(stderr, "Read word: %s\n", buffer->data);
+        ret = stable_insert(&table, type, mode, buffer->data);
+        fprintf(stderr, "Inserted onto stable\n");
+        if(ret.new) {
             *ret.data = 1;
-        else
+            fprintf(stderr, "\tNew word!\n");
+        }
+        else {
             (*ret.data)++;
-
-        while(!isalnum(c)) {
+            fprintf(stderr, "\told word. *ret.data = %d\n", *ret.data);
+        }
+        buffer_reset(buffer);
+        while(!isalnum(c) && c != EOF) {
             c = fgetc(f);
         }
+        fprintf(stderr, "loop\n");
     }
     stable_print(table, type, mode);
+    fprintf(stderr, "Out of the loop\n");
     fclose(f);
+    fprintf(stderr, "Closed file\n");
     buffer_destroy(buffer);
+    fprintf(stderr, "Destroyed buffer\n");
     stable_destroy(table, type);
+    fprintf(stderr, "Destroyed table\n");
     return 0;
 }

@@ -15,58 +15,12 @@ STable stable_create_vd() {
 
 
 void stable_destroy_vd(STable table) {
+    fprintf(stderr, "We here\n");
     free(table.v->vector);
+    fprintf(stderr, "Freed table vector\n");
     free(table.v);
+    fprintf(stderr, "Freed table\n");
 }
-
-void stable_reallocate_vd(STable table) {
-    STable new;
-    int i;
-    new.v = malloc(sizeof(struct stable_v));
-    new.v->vector = (TableEntry*)malloc(2 * table.v->max * sizeof(TableEntry));
-    for(i = 0; i < table.v->top; i++) {
-        new.v->vector[i] = table.v->vector[i];
-    }
-    new.v->top = table.v->top;
-    new.v->max = 2 * table.v->max;
-    free(table.v->vector);
-    free(table.v);
-    table = new;
-}
-
-Result stable_insert_vd(STable table, char* key) {
-    int i;
-    Result ret;
-    for(i = 0; i < table.v->top; i++) {
-        if(strcmp(key, table.v->vector[i].key) == 0) {
-            ret.new = 0;
-            ret.data = &(table.v->vector[i].data);
-            return ret;
-        }
-    }
-    if(table.v->top == table.v->max)
-        stable_reallocate_vd(table);
-    table.v->vector[table.v->top].key = key;
-    table.v->vector[table.v->top].data = 0;
-    ret.new = 1;
-    ret.data = &(table.v->vector[table.v->top++].data);
-    return ret;
-}
-
-int* stable_find_vd(STable table, char* key) {
-    int i;
-    for(i = 0; i < table.v->top; i++) {
-        if(strcmp(key, table.v->vector[i].key) == 0) {
-            return &(table.v->vector[i].data);
-        }
-    }
-    return NULL;
-}
-/*
-void stable_quickSort_o(STable table, int start, int end) {
-    return;
-}
-*/
 
 void stable_merge_o(STable table, int start, int mid, int end) {
     int i = start, j = mid + 1, k = 0;
@@ -74,7 +28,7 @@ void stable_merge_o(STable table, int start, int mid, int end) {
     aux.v = malloc(sizeof(struct stable_v));
     aux.v->vector = malloc((end - start + 1) * sizeof(TableEntry));
     while(i <= mid && j <= end) {
-        if(table.v->vector[i].data <= table.v->vector[j].data)
+        if(table.v->vector[i].data >= table.v->vector[j].data)
             aux.v->vector[k++] = table.v->vector[i++];
         else
             aux.v->vector[k++] = table.v->vector[j++];
@@ -130,23 +84,6 @@ void stable_sort_a(STable table, int start, int end) {
     }
 }
 
-/*
-void stable_quickSort_a(STable table, int start, int end) {
-    TableEntry aux;
-    char* pivot;
-    int i, j;
-    pivot = table.v->vector[start].key;
-    i = start;
-    j = end;
-    while(i < j) {
-        while(strcmp(table.v->vector[j].key, pivot) > 0 && j > i)
-            j--;
-        while(strcmp(table.v->vector[i].key, pivot) < 0 && j > i)
-            i++;
-        if(j > i);
-    }
-}
-*/
 
 void stable_print_vd(STable table, const char mode) {
     STable temp;
@@ -163,7 +100,60 @@ void stable_print_vd(STable table, const char mode) {
         stable_sort_a(temp, 0, table.v->top - 1);
     }
     for(i = 0; i < table.v->top; i++) {
-        printf("%s : %d", temp.v->vector[i].key, temp.v->vector[i].data);
+        printf("%s : %d\n", temp.v->vector[i].key, temp.v->vector[i].data);
     }
     stable_destroy_vd(temp);
 }
+
+
+void stable_reallocate_vd(STable table) {
+    STable new;
+    int i;
+    new.v = malloc(sizeof(struct stable_v));
+    new.v->vector = (TableEntry*)malloc(2 * table.v->max * sizeof(TableEntry));
+    for(i = 0; i < table.v->top; i++) {
+        new.v->vector[i] = table.v->vector[i];
+    }
+    new.v->top = table.v->top;
+    new.v->max = 2 * table.v->max;
+    free(table.v->vector);
+    free(table.v);
+    table = new;
+}
+
+Result stable_insert_vd(STable table, char* key) {
+    int i;
+    Result ret;
+    for(i = 0; i < table.v->top; i++) {
+        if(strcmp(key, table.v->vector[i].key) == 0) {
+            ret.new = 0;
+            ret.data = &(table.v->vector[i].data);
+            return ret;
+        }
+    }
+    if(table.v->top == table.v->max) {
+        stable_reallocate_vd(table);
+    }
+    table.v->vector[table.v->top].key = malloc(strlen(key) * sizeof(char));
+    strcpy(table.v->vector[table.v->top].key, key);
+    table.v->vector[table.v->top].data = 0;
+    ret.new = 1;
+    ret.data = &(table.v->vector[table.v->top].data);
+    table.v->top++;
+    return ret;
+}
+
+int* stable_find_vd(STable table, char* key) {
+    int i;
+    for(i = 0; i < table.v->top; i++) {
+        if(strcmp(key, table.v->vector[i].key) == 0) {
+            return &(table.v->vector[i].data);
+        }
+    }
+    return NULL;
+}
+/*
+void stable_quickSort_o(STable table, int start, int end) {
+    return;
+}
+*/

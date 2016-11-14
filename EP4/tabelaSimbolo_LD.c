@@ -5,7 +5,9 @@
 #include <string.h>
 
 STable stable_create_ld() {
-    return NULL;
+    STable table;
+    table.l = NULL;
+    return table;
 }
 
 Result stable_insert_ld(STable* table, char* key) {
@@ -23,7 +25,8 @@ Result stable_insert_ld(STable* table, char* key) {
     }
     /* Insere no começo */
     new.l = malloc(sizeof(struct stable_l));
-    new.l->data.key = key;
+    new.l->data.key = malloc(strlen(key) * sizeof(char));
+    strcpy(new.l->data.key, key);
     new.l->data.data = 0;
     new.l->next = (*table).l;
     (*table) = new;
@@ -76,7 +79,9 @@ void stable_sort_print_o(STable table) {
 
 STable stable_copy_ld(STable table) {
     STable i, new, j;
-    if(table == NULL) return NULL;
+    if(table.l == NULL) {
+        return table;
+    }
     new.l = malloc(sizeof(struct stable_l));
     j = new;
     for(i = table; i.l != NULL; i.l = i.l->next) {

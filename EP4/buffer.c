@@ -15,7 +15,7 @@ void buffer_reallocate(Buffer* b) {
     int i;
     new = (Buffer*) malloc(sizeof(struct buf_s));
     new->data = (char*) malloc(2 * b->max * sizeof(char));
-    for(i = 0; i < buffer->top; i++)
+    for(i = 0; i < b->top; i++)
         new->data[i] = b->data[i];
     new->max = 2 * b->max;
     new->top = b->top;
@@ -32,8 +32,8 @@ void buffer_push_back(Buffer* b, char c) {
 
 void buffer_reset(Buffer* b) {
     int i;
-    for(i = 0; i < Buffer->top; i++)
-        Buffer->data[i] = 0;
+    for(i = 0; i < b->top; i++)
+        b->data[i] = 0;
     b->top = 0;
 }
 

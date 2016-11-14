@@ -50,12 +50,16 @@ typedef struct SORT_VEC {
 
 STable stable_create(const char* type, const char mode);
 
-Result stable_insert(STable table, const char* type, const char mode, char* key);
+Result stable_insert(STable* table, const char* type, const char mode, char* key);
 
 int* stable_find(STable table, const char* type, const char mode, char* key);
 
 void stable_destroy(STable table, const char* type);
 
 void stable_print(STable table, const char* type, const char mode);
+
+void stable_sort_auxvec_a(sortVector v, int start, int end);
+
+void stable_sort_auxvec_o(sortVector v, int start, int end);
 
 #endif

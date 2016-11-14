@@ -31,9 +31,12 @@ void stable_reallocate_vo(STable table) {
 Result stable_insert_vo(STable table, char* key) {
     int ini = 0, fim = table.v->top, mid, res, i;
     Result ret;
-    while(ini <= fim) {
+    fprintf(stderr, "ini = 0, fim = %d\n", table.v->top);
+    while(ini < fim) {
         mid = (ini + fim) / 2;
+        fprintf(stderr, "table.v->vector[mid].key = %s\n", table.v->vector[mid].key);
         res = strcmp(table.v->vector[mid].key, key);
+        fprintf(stderr, "res = %d\n", res);
         if(res == 0) {
             ret.new = 0;
             ret.data = &(table.v->vector[mid].data);
@@ -42,7 +45,7 @@ Result stable_insert_vo(STable table, char* key) {
         else if(res < 0)
             ini = mid + 1;
         else
-            fim = mid - 1;
+            fim = mid;
     }
     /* inserir entre fim e ini*/
     if(table.v->top == table.v->max)
@@ -51,7 +54,8 @@ Result stable_insert_vo(STable table, char* key) {
     for(i = table.v->top + 1; i > ini; i--) {
         table.v->vector[i] = table.v->vector[i - 1];
     }
-    table.v->vector[ini].key = key;
+    table.v->vector[ini].key = malloc(strlen(key) * sizeof(char));
+    strcpy(table.v->vector[ini].key, key);
     table.v->vector[ini].data = 0;
     table.v->top++;
     ret.new = 1;
@@ -75,13 +79,12 @@ int* stable_find_vo(STable table, char* key) {
 }
 
 void stable_merge_vo_o(STable table, int ini, int mid, int fim) {
-    int i = ini, j = mid + 1, k = 0, res;
+    int i = ini, j = mid + 1, k = 0;
     STable aux;
     aux.v = malloc(sizeof(struct stable_v));
     aux.v->vector = (TableEntry*) malloc((fim - ini + 1) * sizeof(TableEntry));
     while(i <= mid && j <= fim) {
-        res = strcmp(table.v->vector[i].key, table.v->vector[j].key);
-        if(res <= 0)
+        if(table.v->vector[i].data > table.v->vector[j].data)
             aux.v->vector[k++] = table.v->vector[i++];
         else
             aux.v->vector[k++] = table.v->vector[j++];

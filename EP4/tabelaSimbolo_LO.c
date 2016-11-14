@@ -92,15 +92,12 @@ void stable_print_lo(STable table, const char mode) {
     STable i;
     sortVector copy;
     int a;
-    fprintf(stderr, "STARTED PRINT\n");
     if(mode == 'A')
         for(i = table; i.l != NULL; i.l = i.l->next)
             printf("%s : %d\n", i.l->data.key, i.l->data.data);
     else {
         copy = stable_copy_lo(table);
-        fprintf(stderr, "PASSED COPY\n");
         stable_sort_auxvec_o(copy, 0, copy.top - 1);
-        fprintf(stderr, "SORTED COPY\n\n");
         for(a = 0; a < copy.top; a++)
             printf("%s : %d\n", copy.vec[a].key, copy.vec[a].data);
         free(copy.vec);

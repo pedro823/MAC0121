@@ -58,7 +58,6 @@ void stable_destroy(STable table, const char* type) {
 }
 
 void stable_print(STable table, const char* type, const char mode) {
-    fprintf(stderr, "Entered stable_print\n");
     if(strcmp(type, "VD") == 0)
         stable_print_vd(table, mode);
     else if(strcmp(type, "VO") == 0)
@@ -68,7 +67,6 @@ void stable_print(STable table, const char* type, const char mode) {
     else if(strcmp(type, "LO") == 0)
         stable_print_lo(table, mode);
     else {
-        fprintf(stderr, "ESCAPED HERE\n");
         stable_print_ab(table.t, mode);
     }
 }

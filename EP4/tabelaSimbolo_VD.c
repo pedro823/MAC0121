@@ -15,11 +15,8 @@ STable stable_create_vd() {
 
 
 void stable_destroy_vd(STable table) {
-    fprintf(stderr, "We here\n");
     free(table.v->vector);
-    fprintf(stderr, "Freed table vector\n");
     free(table.v);
-    fprintf(stderr, "Freed table\n");
 }
 
 void stable_merge_o(STable table, int start, int mid, int end) {

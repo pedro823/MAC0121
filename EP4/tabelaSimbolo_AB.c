@@ -79,7 +79,6 @@ void stable_print_ab(struct stable_ab* root, const char mode) {
     }
     else {
         /* Vector ordenation */
-        fprintf(stderr, "Entered ab\n");
         i = stable_count_ab(root);
         v.vec = malloc(i * sizeof(TableEntry));
         v.top = 0;

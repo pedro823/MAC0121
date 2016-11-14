@@ -31,12 +31,9 @@ void stable_reallocate_vo(STable table) {
 Result stable_insert_vo(STable table, char* key) {
     int ini = 0, fim = table.v->top, mid, res, i;
     Result ret;
-    fprintf(stderr, "ini = 0, fim = %d\n", table.v->top);
     while(ini < fim) {
         mid = (ini + fim) / 2;
-        fprintf(stderr, "table.v->vector[mid].key = %s\n", table.v->vector[mid].key);
         res = strcmp(table.v->vector[mid].key, key);
-        fprintf(stderr, "res = %d\n", res);
         if(res == 0) {
             ret.new = 0;
             ret.data = &(table.v->vector[mid].data);

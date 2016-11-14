@@ -1,7 +1,7 @@
 .PHONY=clean
 $(CC)=gcc
 .DELETE_ON_ERROR=
-CFLAGS=-Wall -ansi -pedantic -O2 -pg
+CFLAGS=-Wall -ansi -pedantic -O2
 ep4: frequency.o stable.o buffer.o tabelaSimbolo_LD.o tabelaSimbolo_VD.o tabelaSimbolo_VO.o tabelaSimbolo_LO.o tabelaSimbolo_AB.o
 	gcc $^ -o $@
 	rm -f $^

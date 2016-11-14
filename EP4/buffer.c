@@ -31,6 +31,9 @@ void buffer_push_back(Buffer* b, char c) {
 }
 
 void buffer_reset(Buffer* b) {
+    int i;
+    for(i = 0; i < Buffer->top; i++)
+        Buffer->data[i] = 0;
     b->top = 0;
 }
 

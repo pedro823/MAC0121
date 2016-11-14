@@ -6,7 +6,7 @@
 
 STable stable_create_vo() {
     STable new;
-    new = (STable) malloc(sizeof(struct stable_v));
+    new.v = malloc(sizeof(struct stable_v));
     new.v->vector = (TableEntry*) malloc(1024 * sizeof(TableEntry));
     new.v->max = 1024;
     new.v->top = 0;
@@ -16,9 +16,9 @@ STable stable_create_vo() {
 void stable_reallocate_vo(STable table) {
     STable new;
     int i;
-    new = (STable) malloc(sizeof(struct stable_v));
+    new.v = malloc(sizeof(struct stable_v));
     new.v->vector = (TableEntry*)malloc(2 * table.v->max * sizeof(TableEntry));
-    for(i = 0; i < table->top; i++) {
+    for(i = 0; i < table.v->top; i++) {
         new.v->vector[i].key = table.v->vector[i].key;
         new.v->vector[i].data = table.v->vector[i].data;
     }
@@ -45,10 +45,10 @@ Result stable_insert_vo(STable table, char* key) {
             fim = mid - 1;
     }
     /* inserir entre fim e ini*/
-    if(table->top == table->max)
+    if(table.v->top == table.v->max)
         stable_reallocate_vo(table);
     /* Empurra todos os da frente para + 1 */
-    for(i = table->top + 1; i > ini; i--) {
+    for(i = table.v->top + 1; i > ini; i--) {
         table.v->vector[i] = table.v->vector[i - 1];
     }
     table.v->vector[ini].key = key;
@@ -77,8 +77,8 @@ int* stable_find_vo(STable table, char* key) {
 void stable_merge_vo_o(STable table, int ini, int mid, int fim) {
     int i = ini, j = mid + 1, k = 0, res;
     STable aux;
-    aux = (STable) malloc(sizeof(struct stable_v));
-    aux->vector = (TableEntry*) malloc((fim - ini + 1) * sizeof(TableEntry));
+    aux.v = malloc(sizeof(struct stable_v));
+    aux.v->vector = (TableEntry*) malloc((fim - ini + 1) * sizeof(TableEntry));
     while(i <= mid && j <= fim) {
         res = strcmp(table.v->vector[i].key, table.v->vector[j].key);
         if(res <= 0)
@@ -109,13 +109,13 @@ void stable_print_vo(STable table, const char mode) {
     STable temp;
     int i;
     if(mode == 'A')
-        for(i = 0; i < table->top; i++)
+        for(i = 0; i < table.v->top; i++)
             printf("%s : %d\n",
                 table.v->vector[i].key, table.v->vector[i].data);
     else {
-        temp = (STable) malloc(table.v->top * sizeof(struct stable_v));
+        temp.v = malloc(table.v->top * sizeof(struct stable_v));
         temp.v->vector = (TableEntry*) malloc(table.v->top*sizeof(TableEntry));
-        for(i = 0; i < table->top; i++)
+        for(i = 0; i < table.v->top; i++)
             temp.v->vector[i] = table.v->vector[i];
         temp.v->top = table.v->top;
         temp.v->max = table.v->top;
@@ -127,6 +127,6 @@ void stable_print_vo(STable table, const char mode) {
 }
 
 void stable_destroy_vo(STable table) {
-    free(table->vector);
-    free(table);
+    free(table.v->vector);
+    free(table.v);
 }

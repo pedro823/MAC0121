@@ -37,7 +37,7 @@ int main(int argAmount, char **argv) {
     c = fgetc(f);
     while(c != EOF) {
         while(isalnum(c)) {
-            buffer_push_back(buffer, c);
+            buffer_push_back(buffer, tolower(c));
             c = fgetc(f);
         }
         ret = stable_insert(table, type, mode, buffer->data);

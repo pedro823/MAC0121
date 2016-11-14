@@ -10,11 +10,11 @@ struct stable_s {
 
 STable stable_create_ab();
 
-Result stable_insert_ab(STable root, char* key);
+Result stable_insert_ab(struct stable_ab* root, char* key);
 
-int* stable_find_ab(STable root, char* key);
+int* stable_find_ab(struct stable_ab* root, char* key);
 
-void stable_destroy_ab(STable root);
+void stable_destroy_ab(struct stable_ab* root);
 
 void stable_print_ab(STable root, const char mode);
 

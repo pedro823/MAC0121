@@ -18,19 +18,19 @@ STable stable_create(const char* type, const char mode) {
     stable_create_ab();
 }
 
-int* stable_insert(STable table, const char* type, const char mode, char* key) {
+Result stable_insert(STable table, const char* type, const char mode, char* key) {
     if(strcmp(type, "VD") == 0)
         return stable_insert_vd(table, key);
     else if(strcmp(type, "VO") == 0)
         return stable_insert_vo(table, key);
     else if(strcmp(type, "LD") == 0)
-        return stable_insert_ld(table, key);
+        return stable_insert_ld(&table, key);
     else if(strcmp(type, "LO") == 0)
-        return stable_insert_lo(table, key);
-    return stable_insert_ab(table, key);
+        return stable_insert_lo(&table, key);
+    return stable_insert_ab(table.t, key);
 }
 
-int* stable_find(STable, const char* type, const char mode, char*key) {
+int* stable_find(STable table, const char* type, const char mode, char* key) {
     if(strcmp(type, "VD") == 0)
         return stable_find_vd(table, key);
     else if(strcmp(type, "VO") == 0)
@@ -39,7 +39,7 @@ int* stable_find(STable, const char* type, const char mode, char*key) {
         return stable_find_ld(table, key);
     else if(strcmp(type, "LO") == 0)
         return stable_find_lo(table, key);
-    return stable_find_ab(table, key);
+    return stable_find_ab(table.t, key);
 }
 
 void stable_destroy(STable table, const char* type) {
@@ -51,7 +51,7 @@ void stable_destroy(STable table, const char* type) {
         stable_destroy_ld(table);
     else if(strcmp(type, "LO") == 0)
         stable_destroy_lo(table);
-    stable_destroy_ab(table);
+    stable_destroy_ab(table.t);
 }
 
 void stable_print(STable table, const char* type, const char mode) {

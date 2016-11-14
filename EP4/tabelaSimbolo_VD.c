@@ -6,7 +6,7 @@
 
 STable stable_create_vd() {
     STable new;
-    new = (STable) malloc(sizeof(struct stable_v));
+    new.v = malloc(sizeof(struct stable_v));
     new.v->vector = (TableEntry*) malloc(1024*sizeof(TableEntry));
     new.v->max = 1024;
     new.v->top = 0;
@@ -15,22 +15,22 @@ STable stable_create_vd() {
 
 
 void stable_destroy_vd(STable table) {
-    free(table->vector);
-    free(table);
+    free(table.v->vector);
+    free(table.v);
 }
 
 void stable_reallocate_vd(STable table) {
     STable new;
     int i;
-    new = (STable) malloc(sizeof(struct stable_v));
+    new.v = malloc(sizeof(struct stable_v));
     new.v->vector = (TableEntry*)malloc(2 * table.v->max * sizeof(TableEntry));
-    for(i = 0; i < table->top; i++) {
+    for(i = 0; i < table.v->top; i++) {
         new.v->vector[i] = table.v->vector[i];
     }
     new.v->top = table.v->top;
     new.v->max = 2 * table.v->max;
-    free(table->vector);
-    free(table);
+    free(table.v->vector);
+    free(table.v);
     table = new;
 }
 
@@ -46,16 +46,16 @@ Result stable_insert_vd(STable table, char* key) {
     }
     if(table.v->top == table.v->max)
         stable_reallocate_vd(table);
-    table->vector[table.v->top].key = key;
-    table->vector[table.v->top].data = 0;
+    table.v->vector[table.v->top].key = key;
+    table.v->vector[table.v->top].data = 0;
     ret.new = 1;
-    ret.data = &(table.v->vector[table->top++].data);
+    ret.data = &(table.v->vector[table.v->top++].data);
     return ret;
 }
 
 int* stable_find_vd(STable table, char* key) {
     int i;
-    for(i = 0; i < table->top; i++) {
+    for(i = 0; i < table.v->top; i++) {
         if(strcmp(key, table.v->vector[i].key) == 0) {
             return &(table.v->vector[i].data);
         }
@@ -69,10 +69,10 @@ void stable_quickSort_o(STable table, int start, int end) {
 */
 
 void stable_merge_o(STable table, int start, int mid, int end) {
-    int i = start, j = mid + 1, k = 0, aux;
+    int i = start, j = mid + 1, k = 0;
     STable aux;
-    aux = (STable) malloc(sizeof(struct stable_v));
-    aux.v->vector = (STable) malloc((end - start + 1) * sizeof(TableEntry));
+    aux.v = malloc(sizeof(struct stable_v));
+    aux.v->vector = malloc((end - start + 1) * sizeof(TableEntry));
     while(i <= mid && j <= end) {
         if(table.v->vector[i].data <= table.v->vector[j].data)
             aux.v->vector[k++] = table.v->vector[i++];
@@ -84,7 +84,7 @@ void stable_merge_o(STable table, int start, int mid, int end) {
     while(j <= end)
         aux.v->vector[k++] = table.v->vector[j++];
     for(i = start; i <= end; i++)
-        table.v->vector[i] = aux.v->vector[i - ini];
+        table.v->vector[i] = aux.v->vector[i - start];
     stable_destroy_vd(aux);
 }
 
@@ -99,10 +99,10 @@ void stable_sort_o(STable table, int start, int end) {
 }
 
 void stable_merge_a(STable table, int start, int mid, int end) {
-    int i = start, j = mid + 1, k = 0, aux;
+    int i = start, j = mid + 1, k = 0;
     STable aux;
-    aux = (STable) malloc(sizeof(struct stable_v));
-    aux.v->vector = (STable) malloc((end - start + 1) * sizeof(TableEntry));
+    aux.v = malloc(sizeof(struct stable_v));
+    aux.v->vector = malloc((end - start + 1) * sizeof(TableEntry));
     while(i <= mid && j <= end) {
         if(strcmp(table.v->vector[i].key, table.v->vector[j].key) <= 0)
             /* ptr1 is smaller */
@@ -116,7 +116,7 @@ void stable_merge_a(STable table, int start, int mid, int end) {
     while(j <= end)
         aux.v->vector[k++] = table.v->vector[j++];
     for(i = start; i <= end; i++)
-        table.v->vector[i] = aux.v->vector[i - ini];
+        table.v->vector[i] = aux.v->vector[i - start];
     stable_destroy_vd(aux);
 }
 
@@ -126,7 +126,7 @@ void stable_sort_a(STable table, int start, int end) {
         mid = (start + end) / 2;
         stable_sort_a(table, start, mid);
         stable_sort_a(table, mid + 1, end);
-        stable_merge_a(table, ini, mid, end);
+        stable_merge_a(table, start, mid, end);
     }
 }
 
@@ -151,18 +151,18 @@ void stable_quickSort_a(STable table, int start, int end) {
 void stable_print_vd(STable table, const char mode) {
     STable temp;
     int i;
-    temp = (STable) malloc(sizeof(struct stable_s));
+    temp.v = malloc(sizeof(struct stable_v));
     temp.v->vector = (TableEntry*) malloc(table.v->top * sizeof(TableEntry));
     temp.v->top = table.v->top;
-    for(i = 0; i < table->top; i++)
+    for(i = 0; i < table.v->top; i++)
         temp.v->vector[i] = table.v->vector[i];
     if(mode == 'O') {
-        stable_sort_o(temp, 0, table->top - 1);
+        stable_sort_o(temp, 0, table.v->top - 1);
     }
     else {
-        stable_sort_a(temp, 0, table->top - 1);
+        stable_sort_a(temp, 0, table.v->top - 1);
     }
-    for(i = 0; i < table->top; i++) {
+    for(i = 0; i < table.v->top; i++) {
         printf("%s : %d", temp.v->vector[i].key, temp.v->vector[i].data);
     }
     stable_destroy_vd(temp);

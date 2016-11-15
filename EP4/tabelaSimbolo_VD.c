@@ -103,40 +103,45 @@ void stable_print_vd(STable table, const char mode) {
 }
 
 
-void stable_reallocate_vd(STable table) {
+STable stable_reallocate_vd(STable table) {
     STable new;
     int i;
     new.v = malloc(sizeof(struct stable_v));
-    new.v->vector = (TableEntry*)malloc(2 * table.v->max * sizeof(TableEntry));
+    new.v->vector = malloc(2 * table.v->max * sizeof(TableEntry));
     for(i = 0; i < table.v->top; i++) {
-        new.v->vector[i] = table.v->vector[i];
+        new.v->vector[i].data = table.v->vector[i].data;
+        new.v->vector[i].key = malloc(strlen(table.v->vector[i].key));
+        strcpy(new.v->vector[i].key, table.v->vector[i].key);
     }
     new.v->top = table.v->top;
     new.v->max = 2 * table.v->max;
+    for(i = 0; i < table.v->top; i++) {
+        free(table.v->vector[i].key);
+    }
     free(table.v->vector);
     free(table.v);
-    table = new;
+    return new;
 }
 
-Result stable_insert_vd(STable table, char* key) {
+Result stable_insert_vd(STable* table, char* key) {
     int i;
     Result ret;
-    for(i = 0; i < table.v->top; i++) {
-        if(strcmp(key, table.v->vector[i].key) == 0) {
+    for(i = 0; i < table->v->top; i++) {
+        if(strcmp(key, table->v->vector[i].key) == 0) {
             ret.new = 0;
-            ret.data = &(table.v->vector[i].data);
+            ret.data = &(table->v->vector[i].data);
             return ret;
         }
     }
-    if(table.v->top == table.v->max) {
-        stable_reallocate_vd(table);
+    if(table->v->top == table->v->max) {
+        *table = stable_reallocate_vd(*table);
     }
-    table.v->vector[table.v->top].key = malloc(strlen(key) * sizeof(char));
-    strcpy(table.v->vector[table.v->top].key, key);
-    table.v->vector[table.v->top].data = 0;
+    table->v->vector[table->v->top].key = malloc(strlen(key) * sizeof(char));
+    strcpy(table->v->vector[table->v->top].key, key);
+    table->v->vector[table->v->top].data = 0;
     ret.new = 1;
-    ret.data = &(table.v->vector[table.v->top].data);
-    table.v->top++;
+    ret.data = &(table->v->vector[table->v->top].data);
+    table->v->top++;
     return ret;
 }
 

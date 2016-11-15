@@ -4,7 +4,7 @@
 
 STable stable_create_vo();
 
-Result stable_insert_vo(STable table, char* key);
+Result stable_insert_vo(STable* table, char* key);
 
 int* stable_find_vo(STable table, char* key);
 

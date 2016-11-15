@@ -22,9 +22,9 @@ STable stable_create(const char* type, const char mode) {
 
 Result stable_insert(STable* table, const char* type, const char mode, char* key) {
     if(strcmp(type, "VD") == 0)
-        return stable_insert_vd((*table), key);
+        return stable_insert_vd(table, key);
     else if(strcmp(type, "VO") == 0)
-        return stable_insert_vo((*table), key);
+        return stable_insert_vo(table, key);
     else if(strcmp(type, "LD") == 0)
         return stable_insert_ld(table, key);
     else if(strcmp(type, "LO") == 0)

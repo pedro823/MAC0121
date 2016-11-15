@@ -5,7 +5,7 @@
 
 STable stable_create_vd();
 
-Result stable_insert_vd(STable table, char* key);
+Result stable_insert_vd(STable* table, char* key);
 
 int* stable_find_vd(STable table, char* key);
 

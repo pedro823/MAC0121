@@ -9,10 +9,23 @@ stack stack_create() {
     return new;
 }
 
+stack stack_realloc(stack s) {
+    stack new;
+    int i;
+    new.v = malloc(2 * s.size * sizeof(pos));
+    new.size = 2 * s.size;
+    for(i = 0; i < s.size; i++)
+        new.v[i] = s.v[i];
+    new.top = s.top;
+    free(s.v);
+    return new;
+}
+
 void stack_insert(stack s, pos x) {
     if(s.top == s.size)
-        stack_realloc(s);
+        s = stack_realloc(s);
     s.v[s.top++] = x;
+    
 }
 
 pos stack_pop(stack s) {

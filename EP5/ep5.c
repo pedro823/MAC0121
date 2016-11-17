@@ -43,7 +43,7 @@ valueList valuelist_create() {
     valueList new;
     /* Somente 196 serão usados, 4 para folga */
     new.v = malloc(200 * sizeof(valuedPos));
-    new.x = 0;
+    new.top = 0;
     return new;
 }
 
@@ -70,15 +70,19 @@ void matrix_play(matrix m, pos x, char color) {
     m[x.i][x.j].c = color;
 }
 
+void printMove(pos aux) {
+    printf("%d %d\n", aux.i, aux.j);
+}
+
 void matrix_print(matrix m) {
     int i, j;
     for(i = 0; i < 14; i++) {
         for(j = 0; j < i; j++)
-            printf(" ");
+            fprintf(stderr, " ");
         for(j = 0; j < 14; j++) {
-            printf("%c ", m[i][j]);
+            fprintf(stderr, "%c ", m[i][j].c);
         }
-        printf("\n");
+        fprintf(stderr, "\n");
     }
 }
 
@@ -94,27 +98,33 @@ posList neighbors(pos x) {
         noNeighbors -= (i == 0 ? 1 : 2);
     ret = poslist_create(noNeighbors);
     if(x.i > 0) {
-        aux = {x.i - 1, x.j};
+        aux.i = x.i - 1;
+        aux.j = x.j;
         ret.v[i++] = aux;
     }
     if(x.i < 13) {
-        aux = {x.i + 1, x.j};
+        aux.i = x.i + 1;
+        aux.j = x.j;
         ret.v[i++] = aux;
     }
     if(x.j > 0) {
-        aux = {x.i, x.j - 1};
+        aux.i = x.i;
+        aux.j = x.j - 1;
         ret.v[i++] = aux;
     }
     if(x.j < 13) {
-        aux = {x.i, x.j + 1};
+        aux.i = x.i;
+        aux.j = x.j + 1;
         ret.v[i++] = aux;
     }
     if(x.i > 0 && x.j < 13) {
-        aux = {x.i - 1, x.j + 1};
+        aux.i = x.i - 1;
+        aux.j = x.j + 1;
         ret.v[i++] = aux;
     }
     if(x.i < 13 && x.j > 0) {
-        aux = {x.i + 1, x.j - 1};
+        aux.i = x.i + 1;
+        aux.j = x.j - 1;
         ret.v[i++] = aux;
     }
     return ret;
@@ -129,7 +139,7 @@ char isFilled(matrix m, pos x) {
 }
 
 bool hasWon(matrix m, char color) {
-    char i = 0, j = 0, binColor;
+    unsigned char i = 0, j = 0, binColor;
     pos aux;
     stack s;
     posList p;
@@ -143,8 +153,9 @@ bool hasWon(matrix m, char color) {
         /* Backtracking de linha */
         while(i < 13) {
             if(m[i][0].visited == 0) {
-                p = neighbors(i, 0);
-
+                aux.i = i;
+                aux.j = 0;
+                p = neighbors(aux);
             }
         }
     }
@@ -154,22 +165,25 @@ bool hasWon(matrix m, char color) {
     return 0;
 }
 
-valuedPos pointCount(matrix m, pos x) {
+valuedPos pointCount(matrix m, pos x, char color) {
     double posPoints = 0;
     valuedPos ret;
-    if(isFilled(m, x))
-        return 0;
-    posPoints += isBridge(m, x);
-    posPoints += isLadder(m, x);
-    posPoints += stratPlace(m, x);
-    posPoints += blockPath(m, x);
-    posPoints += completeBridge(m, x);
     ret.x = x;
-    ret.value = posPoints;
+    if(isFilled(m, x)) {
+        ret.value = 0;
+    }
+    else {
+        posPoints += isBridge(m, x, color);
+        posPoints += isLadder(m, x, color);
+        posPoints += stratPlace(m, x, color);
+        posPoints += blockPath(m, x, color);
+        posPoints += completeBridge(m, x, color);
+        ret.value = posPoints;
+    }
     return ret;
 }
 
-int takeMove(matrix m) {
+void takeMove(matrix m, char color) {
     int index;
     char i, j;
     pos x;
@@ -177,19 +191,30 @@ int takeMove(matrix m) {
     valueList moves;
     moves = valuelist_create();
     for(i = 0; i < 14; i++) {
-        for(j = 0; j < 14; j++) {]
-            x = {i, j};
-            aux = pointCount(m, x);
+        for(j = 0; j < 14; j++) {
+            x.i = i;
+            x.j = j;
+            aux = pointCount(m, x, color);
             valuelist_append(moves, aux);
         }
     }
     valuelist_sort(moves);
+    /* Escolhe a jogada com maior numero de pontos */
+    aux = moves.v[0];
+    matrix_play(m, aux.x, color);
+    printMove(aux.x);
 }
 
+
+/*
+if(print)
+    matrix_print(m);
+*/
 
 int main(int argc, char **argv) {
     matrix m;
     char color;
+    bool print;
     /* Verifications */
     if(argc < 2 || argc > 3) {
         printUsage();
@@ -203,8 +228,9 @@ int main(int argc, char **argv) {
         printUsage();
         return -1;
     }
-    else
+    else {
         color = *argv[1];
-
+        print = (argc == 3 ? 1 : 0);
+    }
     return 0;
 }

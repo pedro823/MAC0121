@@ -2,7 +2,7 @@
 #define __STACK_H__
 
 typedef struct {
-    char i, j;
+    unsigned char i, j;
 } pos;
 
 typedef struct {

@@ -14,7 +14,7 @@ typedef matCell** matrix;
 
 
 typedef struct {
-    char i, j;
+    pos x;
     double value;
 } valuedPos;
 
@@ -23,7 +23,10 @@ typedef struct {
     int size;
 } posList;
 
-typedef valuedPos* valueList;
+typedef struct {
+    valuedPos* v;
+    int top;
+} valueList;
 
 void printUsage() {
     printf("Usage: \n\t./ep5 <p/b>\n\t./ep5 <p/b> d\n");
@@ -34,6 +37,18 @@ posList poslist_create(int size) {
     new.v = malloc(size * sizeof(pos));
     new.size = size;
     return new;
+}
+
+valueList valuelist_create() {
+    valueList new;
+    /* Somente 196 serão usados, 4 para folga */
+    new.v = malloc(200 * sizeof(valuedPos));
+    new.x = 0;
+    return new;
+}
+
+void valuelist_append(valueList list, valuedPos x) {
+    list.v[list.top++] = x;
 }
 
 matrix matrix_create() {
@@ -57,6 +72,14 @@ void matrix_play(matrix m, pos x, char color) {
 
 void matrix_print(matrix m) {
     int i, j;
+    for(i = 0; i < 14; i++) {
+        for(j = 0; j < i; j++)
+            printf(" ");
+        for(j = 0; j < 14; j++) {
+            printf("%c ", m[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 posList neighbors(pos x) {
@@ -97,7 +120,6 @@ posList neighbors(pos x) {
     return ret;
 }
 
-
 char isFilled(matrix m, pos x) {
     if(m[x.i][x.j].c == 'p')
         return 1;
@@ -132,9 +154,38 @@ bool hasWon(matrix m, char color) {
     return 0;
 }
 
-valuedPos pointCount(pos x) {
-
+valuedPos pointCount(matrix m, pos x) {
+    double posPoints = 0;
+    valuedPos ret;
+    if(isFilled(m, x))
+        return 0;
+    posPoints += isBridge(m, x);
+    posPoints += isLadder(m, x);
+    posPoints += stratPlace(m, x);
+    posPoints += blockPath(m, x);
+    posPoints += completeBridge(m, x);
+    ret.x = x;
+    ret.value = posPoints;
+    return ret;
 }
+
+int takeMove(matrix m) {
+    int index;
+    char i, j;
+    pos x;
+    valuedPos aux;
+    valueList moves;
+    moves = valuelist_create();
+    for(i = 0; i < 14; i++) {
+        for(j = 0; j < 14; j++) {]
+            x = {i, j};
+            aux = pointCount(m, x);
+            valuelist_append(moves, aux);
+        }
+    }
+    valuelist_sort(moves);
+}
+
 
 int main(int argc, char **argv) {
     matrix m;

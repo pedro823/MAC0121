@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "positionHandler.h"
 #include <stdlib.h>
 
 stack stack_create() {
@@ -25,7 +26,6 @@ void stack_insert(stack s, pos x) {
     if(s.top == s.size)
         s = stack_realloc(s);
     s.v[s.top++] = x;
-    
 }
 
 pos stack_pop(stack s) {

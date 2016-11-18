@@ -1,9 +1,7 @@
 #ifndef __STACK_H__
 #define __STACK_H__
 
-typedef struct {
-    unsigned char i, j;
-} pos;
+#include "positionHandler.h"
 
 typedef struct {
     pos* v;

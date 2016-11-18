@@ -3,7 +3,7 @@
 $(CC) := gcc
 CFLAGS := -Wall -ansi -pedantic -O2
 
-ep5: ep5.o stack.o
+ep5: ep5.o stack.o positionHandler.o
 	$(CC) $^ -o $@
 	rm *.o *.gch
 
@@ -11,4 +11,4 @@ ep5: ep5.o stack.o
 	$(CC) $^ $(CFLAGS) -c
 
 clean:
-	rm *.o *.gch ep5
+	rm -f *.o *.gch ep5

@@ -2,68 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stack.h"
+#include "positionHandler.h"
 
 #define bool char
 
-typedef struct {
-    char c;
-    int visited;
-} matCell;
-
-typedef matCell** matrix;
-
-
-typedef struct {
-    pos x;
-    double value;
-} valuedPos;
-
-typedef struct {
-    pos* v;
-    int size;
-} posList;
-
-typedef struct {
-    valuedPos* v;
-    int top;
-} valueList;
-
 void printUsage() {
     printf("Usage: \n\t./ep5 <p/b>\n\t./ep5 <p/b> d\n");
-}
-
-posList poslist_create(int size) {
-    posList new;
-    new.v = malloc(size * sizeof(pos));
-    new.size = size;
-    return new;
-}
-
-valueList valuelist_create() {
-    valueList new;
-    /* Somente 196 serão usados, 4 para folga */
-    new.v = malloc(200 * sizeof(valuedPos));
-    new.top = 0;
-    return new;
-}
-
-void valuelist_append(valueList list, valuedPos x) {
-    list.v[list.top++] = x;
-}
-
-matrix matrix_create() {
-    matrix new;
-    int i, j;
-    new = malloc(14*sizeof(matCell*));
-    for(i = 0; i < 14; i++)
-        new[i] = malloc(14*sizeof(matCell));
-    for(i = 0; i < 14; i++) {
-        for(j = 0; j < 14; j++) {
-            new[i][j].c = '-';
-            new[i][j].visited = 0;
-        }
-    }
-    return new;
 }
 
 void matrix_play(matrix m, pos x, char color) {
@@ -72,18 +16,6 @@ void matrix_play(matrix m, pos x, char color) {
 
 void printMove(pos aux) {
     printf("%d %d\n", aux.i, aux.j);
-}
-
-void matrix_print(matrix m) {
-    int i, j;
-    for(i = 0; i < 14; i++) {
-        for(j = 0; j < i; j++)
-            fprintf(stderr, " ");
-        for(j = 0; j < 14; j++) {
-            fprintf(stderr, "%c ", m[i][j].c);
-        }
-        fprintf(stderr, "\n");
-    }
 }
 
 posList neighbors(pos x) {
@@ -178,6 +110,7 @@ valuedPos pointCount(matrix m, pos x, char color) {
         posPoints += stratPlace(m, x, color);
         posPoints += blockPath(m, x, color);
         posPoints += completeBridge(m, x, color);
+        posPoints += openSpace(m, x, color);
         ret.value = posPoints;
     }
     return ret;

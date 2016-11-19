@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stack.h"
+#include "queue.h"
 #include "positionHandler.h"
 
 #define bool char
@@ -72,24 +72,54 @@ char isFilled(matrix m, pos x) {
 
 bool hasWon(matrix m, char color) {
     unsigned char i = 0, j = 0, binColor;
-    pos aux;
-    stack s;
+    pos aux, neighbor;
+    queue* q;
     posList p;
     /* b = linha 0 até a 13
-       p = coluna 0 até a 13 */
+     * p = coluna 0 até a 13
+     * LEMBRAR DE DESTRUIR POSLIST
+     */
+     q = queue_create();
     if(color == 'p') {
         /* Backtracking de coluna */
 
     }
     else {
         /* Backtracking de linha */
+        /* insere todas as posições de onde a linha da
+           vitória pode começar */
         while(i < 13) {
-            if(m[i][0].visited == 0) {
+            if(m[i][0].c == 'b' && m[i][0].visited == 0) {
+                m[i][0].visited = 1;
                 aux.i = i;
                 aux.j = 0;
                 p = neighbors(aux);
+                queue_insertList(q, p);
+                poslist_destroy(p);
             }
         }
+        /* E checa para todo vizinho delas se há um caminho */
+        while(!queue_empty(*q)) {
+            aux = queue_pop(q);
+            if(aux.j == 13) {
+                /* Chegou em uma peça que toca no outro lado
+                   do tabuleiro: vitória! */
+                queue_destroy(q);
+                return 1;
+            }
+            p = neighbors(aux);
+            for(j = 0; j < p.size; j++) {
+                neighbor = p.v[j];
+                if(m[neighbor.i][neighbor.j].visited == 0) {
+                    m[neighbor.i][neighbor.j].visited = 1;
+                    queue_insert(q, neighbor);
+                }
+            }
+            poslist_destroy(p);
+        }
+        /* Se esvaziou a lista, não chegou no fim */
+        queue_destroy(q);
+        return 0;
     }
     for(i = 0; i < 14; i++)
         for(j = 0; j < 14; j++)

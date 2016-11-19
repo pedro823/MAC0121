@@ -9,6 +9,10 @@ posList poslist_create(int size) {
     return new;
 }
 
+void poslist_destroy(posList list) {
+    free(list.v);
+}
+
 valueList valuelist_create() {
     valueList new;
     /* Somente 196 serão usados, 4 para folga */
@@ -55,7 +59,7 @@ void matrix_print(matrix m) {
 void valuelist_merge(valueList list, int start, int mid, int end) {
     int i = start, j = mid + 1, k = 0;
     valueList aux;
-    aux = valueList_create();
+    aux = valuelist_create();
     while(i <= mid && j <= end)
         if(list.v[i].value >= list.v[j].value)
             aux.v[k++] = list.v[i++];

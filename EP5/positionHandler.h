@@ -30,6 +30,8 @@ typedef struct {
 
 posList poslist_create(int size);
 
+void poslist_destroy(posList list);
+
 valueList valuelist_create();
 
 void valuelist_append(valueList list, valuedPos x);

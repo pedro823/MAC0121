@@ -1,9 +1,9 @@
 .PHONY=clean
 .DELETE_ON_ERROR=
 $(CC) := gcc
-CFLAGS := -Wall -ansi -pedantic -O2
+CFLAGS := -Wall -ansi -pedantic -O2 -g
 
-ep5: ep5.o stack.o positionHandler.o
+ep5: hex.o queue.o positionHandler.o strategy.o
 	$(CC) $^ -o $@
 	rm *.o *.gch
 

@@ -62,3 +62,12 @@ Em dois desses caminhos ótimos, a posição
      - - - x
     - - - -
 aparece e deve ser jogada pelas brancas.
+
+
+#Plano 2
+---
+
+Alpha-beta pruning com análise de tabuleiro completa
+
++ Um jogador tem uma sequência ganhadora?
++ 

@@ -5,7 +5,7 @@ CFLAGS := -Wall -ansi -pedantic -O2 -g
 
 ep5: hex.o queue.o positionHandler.o strategy.o
 	$(CC) $^ -o $@
-	rm *.o *.gch
+	rm -f *.o *.gch
 
 %.o: %.c
 	$(CC) $^ $(CFLAGS) -c

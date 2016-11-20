@@ -3,17 +3,8 @@
 
 #include "positionHandler.h"
 
-double isBridge(matrix m, pos x, char color);
+float judgeBoard(matrix m, char color);
 
-double isLadder(matrix m, pos x, char color);
-
-double stratPlace(matrix m, pos x, char color);
-
-double blockPath(matrix m, pos x, char color);
-
-double completeBridge(matrix m, pos x, char color);
-
-double openSpace(matrix m, pos x, char color);
-
+pos completeWinningsequence(matrix m, posList x, char color);
 
 #endif

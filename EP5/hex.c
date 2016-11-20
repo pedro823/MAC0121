@@ -3,8 +3,12 @@
 #include <string.h>
 #include "queue.h"
 #include "positionHandler.h"
+#include "strategy.h"
 
 #define bool char
+
+/* Protótipo dessa função para poder usar no pruneMax */
+float alphaBetaPruneMin(matrix m, float a, float b, int depth, char color);
 
 void printUsage() {
     printf("Usage: \n\t./ep5 <p/b>\n\t./ep5 <p/b> d\n");
@@ -82,7 +86,38 @@ bool hasWon(matrix m, char color) {
      q = queue_create();
     if(color == 'p') {
         /* Backtracking de coluna */
-
+        while(j < 13) {
+            if(m[0][j].c == 'p' && m[0][j].visited == 0) {
+                m[0][j].visited = 1;
+                aux.i = 0;
+                aux.j = j;
+                p = neighbors(aux);
+                queue_insertList(q, p);
+                poslist_destroy(p);
+            }
+            j++;
+        }
+        while(!queue_empty(*q)) {
+            aux = queue_pop(q);
+            if(aux.i == 13) {
+                queue_destroy(q);
+                for(i = 0; i < 14; i++)
+                    for(j = 0; j < 14; j++)
+                        m[i][j].visited = 0;
+                return 1;
+            }
+            p = neighbors(aux);
+            for(j = 0; j < p.size; j++) {
+                neighbor = p.v[j];
+                if(m[neighbor.i][neighbor.j].c == 'p') {
+                    if(m[neighbor.i][neighbor.j].visited == 0) {
+                        m[neighbor.i][neighbor.j].visited = 1;
+                        queue_insert(q, neighbor);
+                    }
+                }
+            }
+            poslist_destroy(p);
+        }
     }
     else {
         /* Backtracking de linha */
@@ -97,6 +132,7 @@ bool hasWon(matrix m, char color) {
                 queue_insertList(q, p);
                 poslist_destroy(p);
             }
+            i++;
         }
         /* E checa para todo vizinho delas se há um caminho */
         while(!queue_empty(*q)) {
@@ -105,69 +141,68 @@ bool hasWon(matrix m, char color) {
                 /* Chegou em uma peça que toca no outro lado
                    do tabuleiro: vitória! */
                 queue_destroy(q);
+                for(i = 0; i < 14; i++)
+                    for(j = 0; j < 14; j++)
+                        m[i][j].visited = 0;
                 return 1;
             }
             p = neighbors(aux);
             for(j = 0; j < p.size; j++) {
                 neighbor = p.v[j];
-                if(m[neighbor.i][neighbor.j].visited == 0) {
-                    m[neighbor.i][neighbor.j].visited = 1;
-                    queue_insert(q, neighbor);
+                if(m[neighbor.i][neighbor.j].c == 'b') {
+                    if(m[neighbor.i][neighbor.j].visited == 0) {
+                        m[neighbor.i][neighbor.j].visited = 1;
+                        queue_insert(q, neighbor);
+                    }
                 }
             }
             poslist_destroy(p);
         }
-        /* Se esvaziou a lista, não chegou no fim */
-        queue_destroy(q);
-        return 0;
     }
+    /* Se esvaziou a lista e não chegou no fim, não há
+       caminho. */
+    queue_destroy(q);
     for(i = 0; i < 14; i++)
         for(j = 0; j < 14; j++)
             m[i][j].visited = 0;
     return 0;
 }
 
-valuedPos pointCount(matrix m, pos x, char color) {
-    double posPoints = 0;
-    valuedPos ret;
-    ret.x = x;
-    if(isFilled(m, x)) {
-        ret.value = 0;
-    }
-    else {
-        posPoints += isBridge(m, x, color);
-        posPoints += isLadder(m, x, color);
-        posPoints += stratPlace(m, x, color);
-        posPoints += blockPath(m, x, color);
-        posPoints += completeBridge(m, x, color);
-        posPoints += openSpace(m, x, color);
-        ret.value = posPoints;
-    }
-    return ret;
-}
-
-void takeMove(matrix m, char color) {
-    int index;
-    char i, j;
-    pos x;
-    valuedPos aux;
-    valueList moves;
-    moves = valuelist_create();
+float alphaBetaPruneMax(matrix m, float a, float b, int depth, char color) {
+    unsigned char i, j;
+    float score;
+    if(depth == 0) return judgeBoard(m, color);
     for(i = 0; i < 14; i++) {
         for(j = 0; j < 14; j++) {
-            x.i = i;
-            x.j = j;
-            aux = pointCount(m, x, color);
-            valuelist_append(moves, aux);
+            if(m[i][j].c == '-') {
+                score = alphaBetaPruneMin(m, a, b, depth - 1, color);
+                if(score >= b)
+                    return b; /* Poda a árvore por beta */
+                if(score > a)
+                    a = score; /* Maximizador para o jogador da vez */
+            }
         }
     }
-    valuelist_sort(moves);
-    /* Escolhe a jogada com maior numero de pontos */
-    aux = moves.v[0];
-    matrix_play(m, aux.x, color);
-    printMove(aux.x);
+    return a;
 }
 
+float alphaBetaPruneMin(matrix m, float a, float b, int depth, char color) {
+    unsigned char i, j;
+    float score;
+    if(depth == 0) return -judgeBoard(m, color);
+    for(i = 0; i < 14; i++) {
+        for (j = 0; j < 14; j++) {
+            if(m[i][j].c == '-') {
+                score = alphaBetaPruneMax(m, a, b, depth - 1, color);
+                if(score <= a)
+                    return a; /* Poda a arvore por alpha */
+                if(score > b)
+                    b = score; /* Minimizador para o jogador adversário */
+            }
+        }
+    }
+    return b;
+}
 
 /*
 if(print)

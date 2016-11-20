@@ -4,6 +4,7 @@
 
 queue* queue_create() {
     queue* q;
+    q = malloc(sizeof(queue));
     q->v = malloc(400 * sizeof(pos));
     q->ini = q->fim = 0;
     q->size = 400;

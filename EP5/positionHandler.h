@@ -14,7 +14,7 @@ typedef matCell** matrix;
 
 typedef struct {
     pos x;
-    double value;
+    float value;
 } valuedPos;
 
 typedef struct {

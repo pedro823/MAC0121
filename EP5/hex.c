@@ -213,7 +213,6 @@ int main(int argc, char **argv) {
     matrix m;
     char color;
     bool print;
-    /* Verifications */
     if(argc < 2 || argc > 3) {
         printUsage();
         return -1;

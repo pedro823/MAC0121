@@ -6,6 +6,7 @@ posList poslist_create(int size) {
     posList new;
     new.v = malloc(size * sizeof(pos));
     new.size = size;
+    new.top = 0;
     return new;
 }
 

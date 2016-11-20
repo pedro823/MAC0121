@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct {
     pos* v;
-    int size;
+    int size, top;
 } posList;
 
 typedef struct {

@@ -72,6 +72,68 @@ static const float ChainMult = 1;
 static const float ChainBase = 1.12;
 
 
+/* Põe em uma posList todos os vizinhos de x */
+posList ListAllNeighbors(pos x) {
+    posList ret;
+    pos aux;
+    ret = poslist_create(12);
+    if(x.i >= 1) {
+        aux.i = x.i - 1;
+        aux.j = x.j;
+        ret.v[ret.top++] = aux;
+        if(x.j < 13) {
+            aux.j = x.j + 1;
+            ret.v[ret.top++] = aux;
+            if(x.j < 12) {
+                aux.j = x.j + 2;
+                ret.v[ret.top++] = aux;
+            }
+            if(x.i >= 2) {
+                aux.i = x.i - 2;
+                aux.j = x.j + 1;
+                ret.v[ret.top++] = aux;
+            }
+        }
+        if(x.j >= 1) {
+            aux.j = x.j - 1;
+            ret.v[ret.top++] = aux;
+        }
+    }
+    if(x.j >= 1) {
+        aux.i = x.i;
+        aux.j = x.j - 1;
+        ret.v[ret.top++] = aux;
+    }
+    if(x.j < 13) {
+        aux.i = x.i;
+        aux.j = x.j + 1;
+        ret.v[ret.top++] = aux;
+    }
+    if(x.i < 13) {
+        aux.i = x.i + 1;
+        aux.j = x.j;
+        ret.v[ret.top++] = aux;
+        if(x.j < 13) {
+            aux.j = x.j + 1;
+            ret.v[ret.top++] = aux;
+        }
+        if(x.j >= 1) {
+            aux.j = x.j - 1;
+            ret.v[ret.top++] = aux;
+            if(x.j >= 2) {
+                aux.j = x.j - 2;
+                ret.v[ret.top++] = aux;
+            }
+            if(x.i < 12) {
+                aux.i = x.i + 2;
+                aux.j = x.j - 1;
+                ret.v[ret.top++] = aux;
+            }
+        }
+
+    }
+    return ret;
+}
 
 float correctBounds(float n) {
     if(n > posInf)

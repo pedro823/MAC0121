@@ -1,7 +1,6 @@
 #include "positionHandler.h"
 #include "strategy.h"
 #include <limits.h>
-#include <math.h>
 
 #define negInf -1000000
 #define posInf  1000000
@@ -58,6 +57,23 @@ static const float BlackInfluence[14][14] = {
     {0.01, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.05},
 };
 
+static const float WhiteInfluence[14][14] = {
+    {0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.01},
+    {0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0.5},
+    {0.5, 0.3, 0.3, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.2, 0.2, 0.4, 0.5},
+    {0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.4, 0.4, 0.4, 0.4, 0.3, 0.4, 0.5, 0.5},
+    {0.5, 0.3, 0.4, 0.3, 0.6, 0.6, 0.6, 0.5, 0.5, 0.6, 0.8, 0.6, 0.5, 0.5},
+    {0.5, 0.3, 0.4, 0.3, 0.6, 1, 1, 1, 1, 0.9, 0.8, 0.6, 0.5, 0.5},
+    {0.5, 0.3, 0.4, 0.8, 0.6, 1, 1.2, 1.2, 1, 0.9, 0.8, 0.4, 0.5, 0.5},
+    {0.5, 0.5, 0.4, 0.8, 0.9, 1, 1.2, 1.2, 1, 0.6, 0.8, 0.4, 0.3, 0.5},
+    {0.5, 0.5, 0.6, 0.8, 0.9, 1, 1, 1, 1, 0.6, 0.3, 0.4, 0.3, 0.5},
+    {0.5, 0.5, 0.6, 0.8, 0.6, 0.5, 0.5, 0.6, 0.6, 0.6, 0.3, 0.4, 0.3, 0.5},
+    {0.5, 0.5, 0.4, 0.3, 0.4, 0.4, 0.4, 0.4, 0.3, 0.3, 0.3, 0.3, 0.3, 0.5},
+    {0.5, 0.4, 0.2, 0.2, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.3, 0.3, 0.5},
+    {0.5, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.5},
+    {0.01, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05},
+};
+
 /* Tunado à mão depois de vários jogos. */
 
 /* Multiplicador da influencia das pontes */
@@ -65,6 +81,8 @@ static const float BridgeMult = 4;
 /* Multiplicador do dano causado por não completar
    uma ponte */
 static const float Uncomplete = -2.5;
+static const float CompleteBridge = 0.5;
+static const float VirtualBridge = 0.3;
 /* Multiplicador das posições vantajosas */
 static const float StratMult = 1;
 /* Multiplicadores de longas cadeias */
@@ -135,6 +153,20 @@ posList ListAllNeighbors(pos x) {
     return ret;
 }
 
+/* Exponenciação em O(log n) */
+float fastpow(float base, int expo) {
+    float ans;
+    if(expo <= 0)
+        ans = 1;
+    while(expo > 0) {
+        if(expo % 2)
+            ans *= base;
+        base *= base;
+        expo >>= 1;
+    }
+    return ans;
+}
+
 float correctBounds(float n) {
     if(n > posInf)
     n = posInf;
@@ -158,11 +190,11 @@ float bridge(matrix m, pos x, char color) {
     if(m[x.i][x.j].c == color) {
         /* Sentido horario */
         if(x.i >= 2 && x.j <= 12 && m[x.i - 2][x.j + 1].c == color) {
-            if(m[x.i - 1][x.j].c == color || m[x.i - 1][x.j +1].c == color) {
+            if(m[x.i - 1][x.j].c == color || m[x.i - 1][x.j + 1].c == color) {
                 if(color == 'p')
-                    result += BlackInfluence[x.i][x.j] * 0.5;
+                    result += BlackInfluence[x.i][x.j] * CompleteBridge;
                 else
-                    result += WhiteInfluence[x.i][x.j] * 0.5;
+                    result += WhiteInfluence[x.i][x.j] * CompleteBridge;
             }
             else if(m[x.i - 1][x.j].c == opsColor(color)
                 || m[x.i - 1][x.j + 1].c == opsColor(color)) {
@@ -171,13 +203,32 @@ float bridge(matrix m, pos x, char color) {
                 else
                     result += WhiteInfluence[x.i][x.j] * Uncomplete;
             }
-            else
+            else {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * VirtualBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * VirtualBridge;
+            }
         }
     }
     else {
         result = 0;
     }
     return correctBounds(result * BridgeMult);
+}
+
+float bridgeFunction(matrix m, char color) {
+    float ans = 0;
+    pos aux;
+    unsigned char i, j;
+    for(i = 0; i < 14; i++) {
+        for(j = 0; j < 14; j++) {
+            aux.i = i;
+            aux.j = j;
+            ans += bridge(m, aux, color);
+        }
+    }
+    return ans;
 }
 
 int partialDfs(matrix m, pos x, char color, int value) {
@@ -221,19 +272,31 @@ float dfsbridge(matrix m, char color) {
         }
     }
     /* Importancia de uma cadeia longa cresce exponencialmente */
-    result = pow(ChainBase, (double) largest) * largest;
+    result = fastpow(ChainBase, largest) * largest;
     return result * ChainMult;
 }
 
 float analizeVantagePos(matrix m, char color) {
     unsigned char i, j;
     float res = 0;
-    for(i = 0; i < 14; i++) {
-        for(j = 0; j < 14; j++) {
-            if(m[i][j].c == color)
-                res += WhiteStrategy[i][j];
-            else if(m[i][j].c == opsColor(color))
-                res -= BlackStrategy[i][j];
+    if(color == 'b') {
+        for(i = 0; i < 14; i++) {
+            for(j = 0; j < 14; j++) {
+                if(m[i][j].c == 'b')
+                    res += WhiteStrategy[i][j];
+                else if(m[i][j].c == 'p')
+                    res -= BlackStrategy[i][j];
+            }
+        }
+    }
+    else {
+        for(i = 0; i < 14; i++) {
+            for(j = 0; j < 14; j++) {
+                if(m[i][j].c == 'p')
+                    res += BlackStrategy[i][j];
+                else if(m[i][j].c == 'b')
+                    res -= WhiteStrategy[i][j];
+            }
         }
     }
     return correctBounds(res * StratMult);
@@ -247,5 +310,12 @@ float winningSequence(matrix m, char color, posList* ref) {
 }
 
 float judgeBoard(matrix m, char color) {
-
+    float value;
+    value += analizeVantagePos(m, color);
+    value = correctBounds(value);
+    value += dfsbridge(m, color);
+    value = correctBounds(value);
+    value += bridgeFunction(m, color);
+    value = correctBounds(value);
+    return value;
 }

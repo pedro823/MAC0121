@@ -1,6 +1,6 @@
 #include "positionHandler.h"
 #include "strategy.h"
-#include <limits.h>
+#include <stdio.h>
 
 #define negInf -1000000
 #define posInf  1000000
@@ -87,7 +87,7 @@ static const float VirtualBridge = 0.3;
 static const float StratMult = 1;
 /* Multiplicadores de longas cadeias */
 static const float ChainMult = 1;
-static const float ChainBase = 1.12;
+static const float ChainBase = 1.11;
 
 
 /* Põe em uma posList todos os vizinhos de x */
@@ -235,6 +235,7 @@ int partialDfs(matrix m, pos x, char color, int value) {
     int i, amount = 1;
     pos aux;
     posList p = ListAllNeighbors(x);
+    fprintf(stderr, "partialDfs:\n");
     m[x.i][x.j].visited = value;
     for(i = 0; i < p.top; i++) {
         aux = p.v[i];
@@ -255,6 +256,7 @@ float dfsbridge(matrix m, char color) {
     int count = 1, largest = 0, chain;
     float result;
     pos x;
+    fprintf(stderr, "dfsbridge:\n");
     for(i = 0; i < 14; i++)
         for(j = 0; j < 14; j++)
             m[i][j].visited = 0;
@@ -262,18 +264,21 @@ float dfsbridge(matrix m, char color) {
         for(j = 0; j < 14; j++) {
             if(m[i][j].c == color && m[i][j].visited == 0) {
                 /* Largest conta a maior corrente que tem
-                 * da cor dentro do tabuleiro */
-                 x.i = i;
-                 x.j = j;
+                 * da cor dentro do tabuleiro
+                 */
+                fprintf(stderr, "\tfound pos %d %d\n", i, j);
+                x.i = i;
+                x.j = j;
                 chain = partialDfs(m, x, color, count);
                 largest = (chain > largest ? chain : largest);
                 count++;
             }
         }
     }
+    fprintf(stderr, "\tlargest: %d\n", largest);
     /* Importancia de uma cadeia longa cresce exponencialmente */
     result = fastpow(ChainBase, largest) * largest;
-    return result * ChainMult;
+    return (result - 1) * ChainMult;
 }
 
 float analizeVantagePos(matrix m, char color) {
@@ -310,12 +315,16 @@ float winningSequence(matrix m, char color, posList* ref) {
 }
 
 float judgeBoard(matrix m, char color) {
-    float value;
+    float value = 0;
+    matrix_print(m);
     value += analizeVantagePos(m, color);
+    fprintf(stderr, "analizeVantagePos: %f\n", value);
     value = correctBounds(value);
     value += dfsbridge(m, color);
+    fprintf(stderr, "dfsbridge: %f\n", value);
     value = correctBounds(value);
     value += bridgeFunction(m, color);
+    fprintf(stderr, "bridgeFunction: %f\n", value);
     value = correctBounds(value);
     return value;
 }

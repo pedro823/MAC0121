@@ -47,9 +47,11 @@ matrix matrix_create() {
 
 void matrix_print(matrix m) {
     int i, j;
+    printf(" 0 1 2 3 4 5 6 7 8 9 A B C D\n");
     for(i = 0; i < 14; i++) {
         for(j = 0; j < i; j++)
             fprintf(stderr, " ");
+        fprintf(stderr, "%c ", "0123456789ABCD"[i]);
         for(j = 0; j < 14; j++) {
             fprintf(stderr, "%c ", m[i][j].c);
         }

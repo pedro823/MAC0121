@@ -14,8 +14,12 @@ void printUsage() {
     printf("Usage: \n\t./ep5 <p/b>\n\t./ep5 <p/b> d\n");
 }
 
-void matrix_play(matrix m, pos x, char color) {
-    m[x.i][x.j].c = color;
+bool matrix_play(matrix m, pos x, char color) {
+    if(m[x.i][x.j].c == '-') {
+        m[x.i][x.j].c = color;
+        return 1;
+    }
+    return 0;
 }
 
 void printMove(pos aux) {
@@ -170,7 +174,6 @@ bool hasWon(matrix m, char color) {
 
 vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
-    float score;
     vPos ret, aux;
     if(depth == 0) {
         ret.x.i = 15;
@@ -199,7 +202,6 @@ vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
 
 vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
-    float score;
     vPos ret, aux;
     if(depth == 0) {
         ret.x.i = 15;
@@ -234,7 +236,9 @@ if(print)
 int main(int argc, char **argv) {
     matrix m;
     char color;
-    bool print;
+    pos x;
+    vPos move;
+    bool print, isTurn;
     if(argc < 2 || argc > 3) {
         printUsage();
         return -1;
@@ -247,9 +251,21 @@ int main(int argc, char **argv) {
         printUsage();
         return -1;
     }
-    else {
-        color = *argv[1];
-        print = (argc == 3 ? 1 : 0);
-    }
+    color = *argv[1];
+    isTurn = (color == 'b' ? 1 : 0);
+    print = (argc == 3 ? 1 : 0);
     return 0;
+    m = matrix_create();
+    while(1) {
+        /* Turno do adversário */
+        while(!isTurn) {
+            scanf("%d %d", &x.i, &x.j);
+            isTurn = matrix_play(m, x, opsColor(color));
+        }
+        if(hasWon(m, opsColor(color))) {
+            color = opsColor(color);
+            break;
+        }
+        /* Minha jogada */
+    }
 }

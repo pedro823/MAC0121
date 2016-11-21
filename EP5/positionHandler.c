@@ -17,7 +17,7 @@ void poslist_destroy(posList list) {
 valueList valuelist_create() {
     valueList new;
     /* Somente 196 serão usados, 4 para folga */
-    new.v = malloc(200 * sizeof(valuedPos));
+    new.v = malloc(200 * sizeof(vPos));
     new.top = 0;
     return new;
 }
@@ -26,7 +26,7 @@ void valuelist_destroy(valueList list) {
     free(list.v);
 }
 
-void valuelist_append(valueList list, valuedPos x) {
+void valuelist_append(valueList list, vPos x) {
     list.v[list.top++] = x;
 }
 

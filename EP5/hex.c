@@ -8,7 +8,7 @@
 #define bool char
 
 /* Protótipo dessa função para poder usar no pruneMax */
-float alphaBetaPruneMin(matrix m, float a, float b, int depth, char color);
+vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color);
 
 void printUsage() {
     printf("Usage: \n\t./ep5 <p/b>\n\t./ep5 <p/b> d\n");
@@ -168,40 +168,62 @@ bool hasWon(matrix m, char color) {
     return 0;
 }
 
-float alphaBetaPruneMax(matrix m, float a, float b, int depth, char color) {
+vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
     float score;
-    if(depth == 0) return judgeBoard(m, color);
+    vPos ret, aux;
+    if(depth == 0) {
+        ret.x.i = 15;
+        ret.x.j = 15;
+        ret.value = judgeBoard(m, color);
+        return ret;
+    }
     for(i = 0; i < 14; i++) {
         for(j = 0; j < 14; j++) {
             if(m[i][j].c == '-') {
-                score = alphaBetaPruneMin(m, a, b, depth - 1, color);
-                if(score >= b)
+                aux = alphaBetaPruneMin(m, a, b, depth - 1, color);
+                if(aux.value >= b.value)
                     return b; /* Poda a árvore por beta */
-                if(score > a)
-                    a = score; /* Maximizador para o jogador da vez */
+                if(aux.value > a.value) {
+                    ret.x.i = i;
+                    ret.x.j = j;
+                    ret.value = aux.value;
+                    /* Maximizador para o jogador da vez */
+                    a.value = aux.value;
+                }
             }
         }
     }
-    return a;
+    return ret;
 }
 
-float alphaBetaPruneMin(matrix m, float a, float b, int depth, char color) {
+vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
     float score;
-    if(depth == 0) return -judgeBoard(m, color);
+    vPos ret, aux;
+    if(depth == 0) {
+        ret.x.i = 15;
+        ret.x.j = 15;
+        ret.value = -judgeBoard(m, color);
+        return ret;
+    }
     for(i = 0; i < 14; i++) {
         for (j = 0; j < 14; j++) {
             if(m[i][j].c == '-') {
-                score = alphaBetaPruneMax(m, a, b, depth - 1, color);
-                if(score <= a)
+                aux = alphaBetaPruneMax(m, a, b, depth - 1, color);
+                if(aux.value <= a.value)
                     return a; /* Poda a arvore por alpha */
-                if(score > b)
-                    b = score; /* Minimizador para o jogador adversário */
+                if(aux.value > b.value) {
+                    ret.x.i = i;
+                    ret.x.j = j;
+                    ret.value = aux.value;
+                     /* Minimizador para o jogador adversário */
+                    b.value = aux.value;
+                }
             }
         }
     }
-    return b;
+    return ret;
 }
 
 /*

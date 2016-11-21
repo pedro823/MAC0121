@@ -15,7 +15,7 @@ typedef matCell** matrix;
 typedef struct {
     pos x;
     float value;
-} valuedPos;
+} vPos;
 
 typedef struct {
     pos* v;
@@ -23,7 +23,7 @@ typedef struct {
 } posList;
 
 typedef struct {
-    valuedPos* v;
+    vPos* v;
     int top;
 } valueList;
 
@@ -34,7 +34,7 @@ void poslist_destroy(posList list);
 
 valueList valuelist_create();
 
-void valuelist_append(valueList list, valuedPos x);
+void valuelist_append(valueList list, vPos x);
 
 matrix matrix_create();
 

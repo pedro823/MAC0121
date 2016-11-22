@@ -11,7 +11,7 @@ ep5: hex.o queue.o positionHandler.o strategy.o
 	$(CC) $^ $(CFLAGS) -c
 
 clean:
-	rm -f *.o *.gch ep5
+	rm -f *.o *.gch ep5 tester
 
 tester: strategy.o strategytester.o positionHandler.o queue.o
 	$(CC) $^ -o $@

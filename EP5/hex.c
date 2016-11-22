@@ -5,19 +5,29 @@
 #include "positionHandler.h"
 #include "strategy.h"
 
+#ifndef posInf
+#define posInf 1000000
+#define negInf -1000000
+#endif
 #define bool char
 
 /* Protótipo dessa função para poder usar no pruneMax */
 vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color);
 
 void printUsage() {
-    printf("Usage: \n\t./ep5 <p/b>\n\t./ep5 <p/b> d\n");
+    printf("Usage: \n./ep5 <p/b>\n./ep5 <p/b> d\n");
+}
+
+void matrix_undo(matrix m, pos x) {
+    m[x.i][x.j].c = '-';
 }
 
 bool matrix_play(matrix m, pos x, char color) {
-    if(m[x.i][x.j].c == '-') {
-        m[x.i][x.j].c = color;
-        return 1;
+    if(x.i >= 0 && x.i < 14 && x.j >= 0 && x.j < 14) {
+        if(m[x.i][x.j].c == '-') {
+            m[x.i][x.j].c = color;
+            return 1;
+        }
     }
     return 0;
 }
@@ -178,7 +188,10 @@ bool hasWon(matrix m, char color) {
 
 vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
+    pos toPlay;
     vPos ret, aux;
+    fprintf(stderr, "PRUNEMAX DEPTH: %d\n", depth);
+    matrix_print(m);
     if(depth == 0) {
         ret.x.i = 15;
         ret.x.j = 15;
@@ -187,8 +200,11 @@ vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
     }
     for(i = 0; i < 14; i++) {
         for(j = 0; j < 14; j++) {
-            if(m[i][j].c == '-') {
+            toPlay.i = i;
+            toPlay.j = j;
+            if(matrix_play(m, toPlay, color)) {
                 aux = alphaBetaPruneMin(m, a, b, depth - 1, color);
+                matrix_undo(m, toPlay);
                 if(aux.value >= b.value)
                     return b; /* Poda a árvore por beta */
                 if(aux.value > a.value) {
@@ -206,17 +222,23 @@ vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
 
 vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
+    pos toPlay;
     vPos ret, aux;
+    fprintf(stderr, "PRUNEMIN DEPTH: %d\n", depth);
+    matrix_print(m);
     if(depth == 0) {
         ret.x.i = 15;
         ret.x.j = 15;
-        ret.value = -judgeBoard(m, color);
+        ret.value = -judgeBoard(m, opsColor(color));
         return ret;
     }
     for(i = 0; i < 14; i++) {
         for (j = 0; j < 14; j++) {
-            if(m[i][j].c == '-') {
+            toPlay.i = i;
+            toPlay.j = j;
+            if(matrix_play(m, toPlay, opsColor(color))) {
                 aux = alphaBetaPruneMax(m, a, b, depth - 1, color);
+                matrix_undo(m, toPlay);
                 if(aux.value <= a.value)
                     return a; /* Poda a arvore por alpha */
                 if(aux.value > b.value) {
@@ -241,7 +263,7 @@ int main(int argc, char **argv) {
     matrix m;
     char color;
     pos x;
-    vPos move;
+    vPos move, a, b;
     bool print, isTurn;
     if(argc < 2 || argc > 3) {
         printUsage();
@@ -258,12 +280,14 @@ int main(int argc, char **argv) {
     color = *argv[1];
     isTurn = (color == 'b' ? 1 : 0);
     print = (argc == 3 ? 1 : 0);
-    return 0;
     m = matrix_create();
     while(1) {
         /* Turno do adversário */
+        if(print) {
+            matrix_print(m);
+        }
         while(!isTurn) {
-            scanf("%d %d", &x.i, &x.j);
+            scanf("%u %u", &x.i, &x.j);
             isTurn = matrix_play(m, x, opsColor(color));
         }
         if(hasWon(m, opsColor(color))) {
@@ -271,7 +295,19 @@ int main(int argc, char **argv) {
             break;
         }
         /* Minha jogada */
+        a.value = negInf;
+        b.value = posInf;
+        move = alphaBetaPruneMax(m, a, b, 2, color);
+        printf("%d %d\n", move.x.i, move.x.j);
+        isTurn = matrix_play(m, x, color);
+        if(isTurn == 0) {
+            printf("ERRO EM ALPHA-BETA! TERMINANDO\n");
+            return 0;
+        }
+        else {
+            isTurn = 0;
+        }
     }
-    metrix_destroy(m);
+    matrix_destroy(m);
     return 0;
 }

@@ -45,6 +45,13 @@ matrix matrix_create() {
     return new;
 }
 
+void matrix_destroy(matrix m) {
+    unsigned char i;
+    for(i = 0; i < 14; i++)
+        free(m[i]);
+    free(m);
+}
+
 void matrix_print(matrix m) {
     int i, j;
     printf(" 0 1 2 3 4 5 6 7 8 9 A B C D\n");

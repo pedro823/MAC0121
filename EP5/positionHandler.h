@@ -38,6 +38,8 @@ void valuelist_append(valueList list, vPos x);
 
 matrix matrix_create();
 
+void matrix_destroy(matrix m);
+
 void matrix_print(matrix m);
 
 void valuelist_sort(valueList list);

@@ -50,4 +50,5 @@ pos queue_next(queue *q) {
 
 void queue_destroy(queue* q) {
     free(q->v);
+    free(q);
 }

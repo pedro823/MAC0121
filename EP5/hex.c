@@ -79,7 +79,7 @@ char isFilled(matrix m, pos x) {
 }
 
 bool hasWon(matrix m, char color) {
-    unsigned char i = 0, j = 0, binColor;
+    unsigned char i, j;
     pos aux, neighbor;
     queue* q;
     posList p;
@@ -87,11 +87,15 @@ bool hasWon(matrix m, char color) {
      * p = coluna 0 até a 13
      * LEMBRAR DE DESTRUIR POSLIST
      */
-     q = queue_create();
-    if(color == 'p') {
+    for(i = 0; i < 14; i++)
+        for(j = 0; j < 14; j++)
+            m[i][j].visited = 0;
+    i = 0; j = 0;
+    q = queue_create();
+    if(color == 'b') {
         /* Backtracking de coluna */
-        while(j < 13) {
-            if(m[0][j].c == 'p' && m[0][j].visited == 0) {
+        while(j < 14) {
+            if(m[0][j].c == 'b' && m[0][j].visited == 0) {
                 m[0][j].visited = 1;
                 aux.i = 0;
                 aux.j = j;
@@ -113,7 +117,7 @@ bool hasWon(matrix m, char color) {
             p = neighbors(aux);
             for(j = 0; j < p.size; j++) {
                 neighbor = p.v[j];
-                if(m[neighbor.i][neighbor.j].c == 'p') {
+                if(m[neighbor.i][neighbor.j].c == 'b') {
                     if(m[neighbor.i][neighbor.j].visited == 0) {
                         m[neighbor.i][neighbor.j].visited = 1;
                         queue_insert(q, neighbor);
@@ -127,8 +131,8 @@ bool hasWon(matrix m, char color) {
         /* Backtracking de linha */
         /* insere todas as posições de onde a linha da
            vitória pode começar */
-        while(i < 13) {
-            if(m[i][0].c == 'b' && m[i][0].visited == 0) {
+        while(i < 14) {
+            if(m[i][0].c == 'p' && m[i][0].visited == 0) {
                 m[i][0].visited = 1;
                 aux.i = i;
                 aux.j = 0;
@@ -153,7 +157,7 @@ bool hasWon(matrix m, char color) {
             p = neighbors(aux);
             for(j = 0; j < p.size; j++) {
                 neighbor = p.v[j];
-                if(m[neighbor.i][neighbor.j].c == 'b') {
+                if(m[neighbor.i][neighbor.j].c == 'p') {
                     if(m[neighbor.i][neighbor.j].visited == 0) {
                         m[neighbor.i][neighbor.j].visited = 1;
                         queue_insert(q, neighbor);
@@ -268,4 +272,6 @@ int main(int argc, char **argv) {
         }
         /* Minha jogada */
     }
+    metrix_destroy(m);
+    return 0;
 }

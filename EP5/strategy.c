@@ -235,7 +235,6 @@ int partialDfs(matrix m, pos x, char color, int value) {
     int i, amount = 1;
     pos aux;
     posList p = ListAllNeighbors(x);
-    fprintf(stderr, "partialDfs:\n");
     m[x.i][x.j].visited = value;
     for(i = 0; i < p.top; i++) {
         aux = p.v[i];
@@ -256,7 +255,6 @@ float dfsbridge(matrix m, char color) {
     int count = 1, largest = 0, chain;
     float result;
     pos x;
-    fprintf(stderr, "dfsbridge:\n");
     for(i = 0; i < 14; i++)
         for(j = 0; j < 14; j++)
             m[i][j].visited = 0;
@@ -266,7 +264,6 @@ float dfsbridge(matrix m, char color) {
                 /* Largest conta a maior corrente que tem
                  * da cor dentro do tabuleiro
                  */
-                fprintf(stderr, "\tfound pos %d %d\n", i, j);
                 x.i = i;
                 x.j = j;
                 chain = partialDfs(m, x, color, count);
@@ -275,7 +272,6 @@ float dfsbridge(matrix m, char color) {
             }
         }
     }
-    fprintf(stderr, "\tlargest: %d\n", largest);
     /* Importancia de uma cadeia longa cresce exponencialmente */
     result = fastpow(ChainBase, largest) * largest;
     return (result - 1) * ChainMult;
@@ -316,7 +312,7 @@ float winningSequence(matrix m, char color, posList* ref) {
 
 float judgeBoard(matrix m, char color) {
     float value = 0;
-    matrix_print(m);
+    /* matrix_print(m); */
     value += analizeVantagePos(m, color);
     fprintf(stderr, "analizeVantagePos: %f\n", value);
     value = correctBounds(value);

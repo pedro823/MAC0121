@@ -190,8 +190,6 @@ vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
     pos toPlay;
     vPos ret, aux;
-    fprintf(stderr, "PRUNEMAX DEPTH: %d\n", depth);
-    matrix_print(m);
     if(depth == 0) {
         ret.x.i = 15;
         ret.x.j = 15;
@@ -224,8 +222,6 @@ vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color) {
     unsigned char i, j;
     pos toPlay;
     vPos ret, aux;
-    fprintf(stderr, "PRUNEMIN DEPTH: %d\n", depth);
-    matrix_print(m);
     if(depth == 0) {
         ret.x.i = 15;
         ret.x.j = 15;
@@ -299,6 +295,7 @@ int main(int argc, char **argv) {
         b.value = posInf;
         move = alphaBetaPruneMax(m, a, b, 2, color);
         printf("%d %d\n", move.x.i, move.x.j);
+        x = move.x;
         isTurn = matrix_play(m, x, color);
         if(isTurn == 0) {
             printf("ERRO EM ALPHA-BETA! TERMINANDO\n");
@@ -307,7 +304,10 @@ int main(int argc, char **argv) {
         else {
             isTurn = 0;
         }
+        if(hasWon(m, color))
+            break;
     }
+    printf("%c ganhou\n", color);
     matrix_destroy(m);
     return 0;
 }

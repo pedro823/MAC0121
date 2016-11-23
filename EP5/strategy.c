@@ -314,13 +314,10 @@ float judgeBoard(matrix m, char color) {
     float value = 0;
     /* matrix_print(m); */
     value += analizeVantagePos(m, color);
-    fprintf(stderr, "analizeVantagePos: %f\n", value);
     value = correctBounds(value);
     value += dfsbridge(m, color);
-    fprintf(stderr, "dfsbridge: %f\n", value);
     value = correctBounds(value);
     value += bridgeFunction(m, color);
-    fprintf(stderr, "bridgeFunction: %f\n", value);
     value = correctBounds(value);
     return value;
 }

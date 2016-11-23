@@ -80,7 +80,7 @@ static const float WhiteInfluence[14][14] = {
 static const float BridgeMult = 4;
 /* Multiplicador do dano causado por não completar
    uma ponte */
-static const float Uncomplete = -2.5;
+static const float Uncomplete = -3.1;
 static const float CompleteBridge = 0.5;
 static const float VirtualBridge = 0.3;
 /* Multiplicador das posições vantajosas */
@@ -210,6 +210,90 @@ float bridge(matrix m, pos x, char color) {
                     result += WhiteInfluence[x.i][x.j] * VirtualBridge;
             }
         }
+        if(x.i <= 1 && x.j <= 11 && m[x.i - 1][x.j + 2].c == color) {
+            if(m[x.i - 1][x.j + 1].c == color || m[x.i][x.j + 1]. c == color) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * CompleteBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * CompleteBridge;
+            }
+            else if(m[x.i - 1][x.j + 1].c == opsColor(color)
+                || m[x.i][x.j + 1].c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * Uncomplete;
+                else
+                    result += WhiteInfluence[x.i][x.j] * Uncomplete;
+            }
+            else {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * VirtualBridge;
+                else
+                    result += BlackInfluence[x.i][x.j] * VirtualBridge;
+            }
+        }
+        if(x.i <= 12 && x.j <= 12 && m[x.i + 1][x.j + 1].c == color) {
+            if(m[x.i + 1][x.j].c == color || m[x.i][x.j + 1].c == color) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * CompleteBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * CompleteBridge;
+            }
+            else if(m[x.i + 1][x.j].c == opsColor(color)
+                || m[x.i][x.j + 1].c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * Uncomplete;
+                else
+                    result += WhiteInfluence[x.i][x.j] * Uncomplete;
+            }
+            else {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * VirtualBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * VirtualBridge;
+            }
+        }
+        if(x.i <= 12 && x.j >= 2 && m[x.i + 1][x.j - 2].c == color) {
+            if(m[x.i + 1][x.j - 1].c == color || m[x.i][x.j - 1].c == color) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * CompleteBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * CompleteBridge;
+            }
+            else if(m[x.i + 1][x.j - 1].c == opsColor(color)
+                || m[x.i][x.j - 1]. c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * Uncomplete;
+                else
+                    result += WhiteInfluence[x.i][x.j] * Uncomplete;
+            }
+            else {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * VirtualBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * VirtualBridge;
+            }
+        }
+        if(x.i >= 1 && x.j >= 1 && m[x.i - 1][x.j - 1].c == color) {
+            if(m[x.i][x.j - 1].c == color || m[x.i - 1][x.j].c == color) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * CompleteBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * CompleteBridge;
+            }
+            else if(m[x.i][x.j - 1].c == opsColor(color)
+                || m[x.i - 1][x.j].c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * Uncomplete;
+                else
+                    result += WhiteInfluence[x.i][x.j] * Uncomplete;
+            }
+            else {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * VirtualBridge;
+                else
+                    result += WhiteInfluence[x.i][x.j] * VirtualBridge;
+            }
+        }
     }
     else {
         result = 0;
@@ -317,7 +401,9 @@ float judgeBoard(matrix m, char color) {
     value = correctBounds(value);
     value += dfsbridge(m, color);
     value = correctBounds(value);
+    fprintf(stderr, "value before bridge: %f\n", value);
     value += bridgeFunction(m, color);
+    fprintf(stderr, "value after bridge: %f\n", value);
     value = correctBounds(value);
     return value;
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "queue.h"
 #include "positionHandler.h"
 #include "strategy.h"
@@ -200,6 +201,7 @@ vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
         for(j = 0; j < 14; j++) {
             toPlay.i = i;
             toPlay.j = j;
+            fprintf(stderr,"\n\nplay: %d %d\n", i, j);
             if(matrix_play(m, toPlay, color)) {
                 aux = alphaBetaPruneMin(m, a, b, depth - 1, color);
                 matrix_undo(m, toPlay);
@@ -260,7 +262,7 @@ int main(int argc, char **argv) {
     char color;
     pos x;
     vPos move, a, b;
-    bool print, isTurn;
+    bool print, isTurn, pieRule;
     if(argc < 2 || argc > 3) {
         printUsage();
         return -1;
@@ -276,6 +278,7 @@ int main(int argc, char **argv) {
     color = *argv[1];
     isTurn = (color == 'b' ? 1 : 0);
     print = (argc == 3 ? 1 : 0);
+    pieRule = 1;
     m = matrix_create();
     while(1) {
         /* Turno do adversário */
@@ -297,6 +300,7 @@ int main(int argc, char **argv) {
         printf("%d %d\n", move.x.i, move.x.j);
         x = move.x;
         isTurn = matrix_play(m, x, color);
+        fprintf(stderr, "played move %d %d with value %f\n", move.x.i, move.x.j, move.value);
         if(isTurn == 0) {
             printf("ERRO EM ALPHA-BETA! TERMINANDO\n");
             return 0;
@@ -306,6 +310,7 @@ int main(int argc, char **argv) {
         }
         if(hasWon(m, color))
             break;
+        pieRule = 0;
     }
     printf("%c ganhou\n", color);
     matrix_destroy(m);

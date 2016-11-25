@@ -77,17 +77,20 @@ static const float WhiteInfluence[14][14] = {
 /* Tunado à mão depois de vários jogos. */
 
 /* Multiplicador da influencia das pontes */
-static const float BridgeMult = 4;
+static const float BridgeMult = 3;
 /* Multiplicador do dano causado por não completar
    uma ponte */
 static const float Uncomplete = -3.1;
+static const float FullBlock = -11;
 static const float CompleteBridge = 0.5;
 static const float VirtualBridge = 0.3;
 /* Multiplicador das posições vantajosas */
 static const float StratMult = 1;
 /* Multiplicadores de longas cadeias */
-static const float ChainMult = 1;
-static const float ChainBase = 1.11;
+static const float ChainMult = 0.6;
+static const float ChainBase = 1.2;
+
+static char WinPossible = 0;
 
 
 /* Põe em uma posList todos os vizinhos de x */
@@ -197,6 +200,13 @@ float bridge(matrix m, pos x, char color) {
                     result += WhiteInfluence[x.i][x.j] * CompleteBridge;
             }
             else if(m[x.i - 1][x.j].c == opsColor(color)
+                && m[x.i - 1][x.j + 1].c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * FullBlock;
+                else
+                    result += WhiteInfluence[x.i][x.j] * FullBlock;
+            }
+            else if(m[x.i - 1][x.j].c == opsColor(color)
                 || m[x.i - 1][x.j + 1].c == opsColor(color)) {
                 if(color == 'p')
                     result += BlackInfluence[x.i][x.j] * Uncomplete;
@@ -216,6 +226,13 @@ float bridge(matrix m, pos x, char color) {
                     result += BlackInfluence[x.i][x.j] * CompleteBridge;
                 else
                     result += WhiteInfluence[x.i][x.j] * CompleteBridge;
+            }
+            else if(m[x.i - 1][x.j + 1].c == opsColor(color)
+                && m[x.i][x.j + 1].c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * FullBlock;
+                else
+                    result += WhiteInfluence[x.i][x.j] * FullBlock;
             }
             else if(m[x.i - 1][x.j + 1].c == opsColor(color)
                 || m[x.i][x.j + 1].c == opsColor(color)) {
@@ -239,6 +256,13 @@ float bridge(matrix m, pos x, char color) {
                     result += WhiteInfluence[x.i][x.j] * CompleteBridge;
             }
             else if(m[x.i + 1][x.j].c == opsColor(color)
+                && m[x.i][x.j + 1].c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * FullBlock;
+                else
+                    result += WhiteInfluence[x.i][x.j] * FullBlock;
+            }
+            else if(m[x.i + 1][x.j].c == opsColor(color)
                 || m[x.i][x.j + 1].c == opsColor(color)) {
                 if(color == 'p')
                     result += BlackInfluence[x.i][x.j] * Uncomplete;
@@ -260,6 +284,13 @@ float bridge(matrix m, pos x, char color) {
                     result += WhiteInfluence[x.i][x.j] * CompleteBridge;
             }
             else if(m[x.i + 1][x.j - 1].c == opsColor(color)
+                && m[x.i][x.j - 1]. c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * FullBlock;
+                else
+                    result += WhiteInfluence[x.i][x.j] * FullBlock;
+            }
+            else if(m[x.i + 1][x.j - 1].c == opsColor(color)
                 || m[x.i][x.j - 1]. c == opsColor(color)) {
                 if(color == 'p')
                     result += BlackInfluence[x.i][x.j] * Uncomplete;
@@ -279,6 +310,13 @@ float bridge(matrix m, pos x, char color) {
                     result += BlackInfluence[x.i][x.j] * CompleteBridge;
                 else
                     result += WhiteInfluence[x.i][x.j] * CompleteBridge;
+            }
+            else if(m[x.i][x.j - 1].c == opsColor(color)
+                && m[x.i - 1][x.j].c == opsColor(color)) {
+                if(color == 'p')
+                    result += BlackInfluence[x.i][x.j] * FullBlock;
+                else
+                    result += WhiteInfluence[x.i][x.j] * FullBlock;
             }
             else if(m[x.i][x.j - 1].c == opsColor(color)
                 || m[x.i - 1][x.j].c == opsColor(color)) {
@@ -357,6 +395,7 @@ float dfsbridge(matrix m, char color) {
         }
     }
     /* Importancia de uma cadeia longa cresce exponencialmente */
+    fprintf(stderr, "largest chain(%c): %d\n", color, largest);
     result = fastpow(ChainBase, largest) * largest;
     return (result - 1) * ChainMult;
 }
@@ -364,13 +403,12 @@ float dfsbridge(matrix m, char color) {
 float analizeVantagePos(matrix m, char color) {
     unsigned char i, j;
     float res = 0;
+    fprintf(stderr, "\tcolor = %c\n", color);
     if(color == 'b') {
         for(i = 0; i < 14; i++) {
             for(j = 0; j < 14; j++) {
                 if(m[i][j].c == 'b')
                     res += WhiteStrategy[i][j];
-                else if(m[i][j].c == 'p')
-                    res -= BlackStrategy[i][j];
             }
         }
     }
@@ -379,8 +417,6 @@ float analizeVantagePos(matrix m, char color) {
             for(j = 0; j < 14; j++) {
                 if(m[i][j].c == 'p')
                     res += BlackStrategy[i][j];
-                else if(m[i][j].c == 'b')
-                    res -= WhiteStrategy[i][j];
             }
         }
     }
@@ -392,6 +428,7 @@ float winningSequence(matrix m, char color, posList* ref) {
      * NULL em ref se não há caminho
      * ou o caminho se há um.
      */
+
 }
 
 float judgeBoard(matrix m, char color) {
@@ -399,11 +436,21 @@ float judgeBoard(matrix m, char color) {
     /* matrix_print(m); */
     value += analizeVantagePos(m, color);
     value = correctBounds(value);
+    fprintf(stderr, "analize: %.3f\n", -value);
+    value -= analizeVantagePos(m, opsColor(color));
+    value = correctBounds(value);
+    fprintf(stderr, "~analize: %.3f\n", -value);
     value += dfsbridge(m, color);
     value = correctBounds(value);
-    fprintf(stderr, "value before bridge: %f\n", value);
-    value += bridgeFunction(m, color);
-    fprintf(stderr, "value after bridge: %f\n", value);
+    fprintf(stderr, "dfsbridge: %.3f\n", -value);
+    value -= dfsbridge(m, opsColor(color));
     value = correctBounds(value);
+    fprintf(stderr, "~dfsbridge: %.3f\n", -value);
+    value += bridgeFunction(m, color);
+    value = correctBounds(value);
+    fprintf(stderr, "bridge: %.3f\n", -value);
+    value -= bridgeFunction(m, opsColor(color));
+    value = correctBounds(value);
+    fprintf(stderr, "~bridge: %.3f\n", -value);
     return value;
 }

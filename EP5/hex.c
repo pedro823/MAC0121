@@ -15,8 +15,8 @@
 /* Protótipo dessa função para poder usar no pruneMax */
 vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color);
 
-void printUsage() {
-    printf("Usage: \n./ep5 <p/b>\n./ep5 <p/b> d\n");
+void printUsage(char **argv) {
+    printf("Usage: \n%s <p/b>\n%s <p/b> d\n", argv[0], argv[0]);
 }
 
 void matrix_undo(matrix m, pos x) {
@@ -111,7 +111,11 @@ bool hasWon(matrix m, char color) {
                 aux.i = 0;
                 aux.j = j;
                 p = neighbors(aux);
-                queue_insertList(q, p);
+                for(i = 0; i < p.size; i++) {
+                    neighbor = p.v[i];
+                    if(m[neighbor.i][neighbor.j].c == 'b')
+                        queue_insert(q, neighbor);
+                }
                 poslist_destroy(p);
             }
             j++;
@@ -148,7 +152,11 @@ bool hasWon(matrix m, char color) {
                 aux.i = i;
                 aux.j = 0;
                 p = neighbors(aux);
-                queue_insertList(q, p);
+                for(j = 0; j < p.size; j++) {
+                    neighbor = p.v[j];
+                    if(m[neighbor.i][neighbor.j].c == 'b')
+                        queue_insert(q, neighbor);
+                }
                 poslist_destroy(p);
             }
             i++;
@@ -201,7 +209,6 @@ vPos alphaBetaPruneMax(matrix m, vPos a, vPos b, int depth, char color) {
         for(j = 0; j < 14; j++) {
             toPlay.i = i;
             toPlay.j = j;
-            fprintf(stderr,"\n\nplay: %d %d\n", i, j);
             if(matrix_play(m, toPlay, color)) {
                 aux = alphaBetaPruneMin(m, a, b, depth - 1, color);
                 matrix_undo(m, toPlay);
@@ -262,23 +269,26 @@ int main(int argc, char **argv) {
     char color;
     pos x;
     vPos move, a, b;
-    bool print, isTurn, pieRule;
+    bool print, isTurn, ply;
     if(argc < 2 || argc > 3) {
-        printUsage();
+        printUsage(argv);
         return -1;
     }
     else if(strcmp(argv[1], "p") && strcmp(argv[1], "b")) {
-        printUsage();
+        printUsage(argv);
         return -1;
     }
     else if(argc == 3 && strcmp(argv[2], "d") != 0) {
-        printUsage();
+        printUsage(argv);
         return -1;
     }
     color = *argv[1];
     isTurn = (color == 'b' ? 1 : 0);
     print = (argc == 3 ? 1 : 0);
-    pieRule = 1;
+    /* um ply = meio turno: uma jogada de uma pessoa.
+       termo utilizado em jogos de tabuleiro.
+       o ply é só utilizado para verificar a pie-rule. */
+    ply = 0;
     m = matrix_create();
     while(1) {
         /* Turno do adversário */
@@ -286,8 +296,16 @@ int main(int argc, char **argv) {
             matrix_print(m);
         }
         while(!isTurn) {
-            scanf("%u %u", &x.i, &x.j);
+            if(scanf("%u %u", &x.i, &x.j));
             isTurn = matrix_play(m, x, opsColor(color));
+            if(ply == 1 && !isTurn) {
+                isTurn = 1;
+                color = opsColor(color);
+            }
+            else if(!isTurn) {
+                /* Isso não altera nada, mas é bom para visualização */
+                fprintf(stderr, "Jogada invalida\n");
+            }
         }
         if(hasWon(m, opsColor(color))) {
             color = opsColor(color);
@@ -300,7 +318,6 @@ int main(int argc, char **argv) {
         printf("%d %d\n", move.x.i, move.x.j);
         x = move.x;
         isTurn = matrix_play(m, x, color);
-        fprintf(stderr, "played move %d %d with value %f\n", move.x.i, move.x.j, move.value);
         if(isTurn == 0) {
             printf("ERRO EM ALPHA-BETA! TERMINANDO\n");
             return 0;
@@ -310,7 +327,7 @@ int main(int argc, char **argv) {
         }
         if(hasWon(m, color))
             break;
-        pieRule = 0;
+        ply++;
     }
     printf("%c ganhou\n", color);
     matrix_destroy(m);

@@ -1,6 +1,5 @@
 #include "positionHandler.h"
 #include "strategy.h"
-#include <stdio.h>
 
 #define negInf -1000000
 #define posInf  1000000
@@ -58,9 +57,11 @@ static const float BlackInfluence[14][14] = {
 };
 
 static const float WhiteInfluence[14][14] = {
-    {0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.01},
+    {0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
+        0.05, 0.01},
     {0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0.5},
-    {0.5, 0.3, 0.3, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.2, 0.2, 0.4, 0.5},
+    {0.5, 0.3, 0.3, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.2, 0.2, 0.4,
+        0.5},
     {0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.4, 0.4, 0.4, 0.4, 0.3, 0.4, 0.5, 0.5},
     {0.5, 0.3, 0.4, 0.3, 0.6, 0.6, 0.6, 0.5, 0.5, 0.6, 0.8, 0.6, 0.5, 0.5},
     {0.5, 0.3, 0.4, 0.3, 0.6, 1, 1, 1, 1, 0.9, 0.8, 0.6, 0.5, 0.5},
@@ -69,9 +70,11 @@ static const float WhiteInfluence[14][14] = {
     {0.5, 0.5, 0.6, 0.8, 0.9, 1, 1, 1, 1, 0.6, 0.3, 0.4, 0.3, 0.5},
     {0.5, 0.5, 0.6, 0.8, 0.6, 0.5, 0.5, 0.6, 0.6, 0.6, 0.3, 0.4, 0.3, 0.5},
     {0.5, 0.5, 0.4, 0.3, 0.4, 0.4, 0.4, 0.4, 0.3, 0.3, 0.3, 0.3, 0.3, 0.5},
-    {0.5, 0.4, 0.2, 0.2, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.3, 0.3, 0.5},
+    {0.5, 0.4, 0.2, 0.2, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.3, 0.3, 
+        0.5},
     {0.5, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.5},
-    {0.01, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05},
+    {0.01, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
+        0.05, 0.05},
 };
 
 /* Tunado à mão depois de vários jogos. */
@@ -80,17 +83,14 @@ static const float WhiteInfluence[14][14] = {
 static const float BridgeMult = 3;
 /* Multiplicador do dano causado por não completar
    uma ponte */
-static const float Uncomplete = -3.1;
-static const float FullBlock = -11;
-static const float CompleteBridge = 0.5;
-static const float VirtualBridge = 0.3;
+static const float Uncomplete = -6;
+static const float FullBlock = -15;
+static const float CompleteBridge = 0.9;
+static const float VirtualBridge = 0.5;
 /* Multiplicador das posições vantajosas */
 static const float StratMult = 1;
 /* Multiplicadores de longas cadeias */
-static const float ChainMult = 0.6;
-static const float ChainBase = 1.2;
-
-static char WinPossible = 0;
+static const float ChainMult = 1.9;
 
 
 /* Põe em uma posList todos os vizinhos de x */
@@ -395,15 +395,13 @@ float dfsbridge(matrix m, char color) {
         }
     }
     /* Importancia de uma cadeia longa cresce exponencialmente */
-    fprintf(stderr, "largest chain(%c): %d\n", color, largest);
-    result = fastpow(ChainBase, largest) * largest;
+    result = largest;
     return (result - 1) * ChainMult;
 }
 
 float analizeVantagePos(matrix m, char color) {
     unsigned char i, j;
     float res = 0;
-    fprintf(stderr, "\tcolor = %c\n", color);
     if(color == 'b') {
         for(i = 0; i < 14; i++) {
             for(j = 0; j < 14; j++) {
@@ -423,34 +421,20 @@ float analizeVantagePos(matrix m, char color) {
     return correctBounds(res * StratMult);
 }
 
-float winningSequence(matrix m, char color, posList* ref) {
-    /* devolver 0 ou posInf
-     * NULL em ref se não há caminho
-     * ou o caminho se há um.
-     */
-
-}
-
 float judgeBoard(matrix m, char color) {
     float value = 0;
     /* matrix_print(m); */
     value += analizeVantagePos(m, color);
     value = correctBounds(value);
-    fprintf(stderr, "analize: %.3f\n", -value);
     value -= analizeVantagePos(m, opsColor(color));
     value = correctBounds(value);
-    fprintf(stderr, "~analize: %.3f\n", -value);
     value += dfsbridge(m, color);
     value = correctBounds(value);
-    fprintf(stderr, "dfsbridge: %.3f\n", -value);
     value -= dfsbridge(m, opsColor(color));
     value = correctBounds(value);
-    fprintf(stderr, "~dfsbridge: %.3f\n", -value);
     value += bridgeFunction(m, color);
     value = correctBounds(value);
-    fprintf(stderr, "bridge: %.3f\n", -value);
     value -= bridgeFunction(m, opsColor(color));
     value = correctBounds(value);
-    fprintf(stderr, "~bridge: %.3f\n", -value);
     return value;
 }

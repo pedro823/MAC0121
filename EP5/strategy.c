@@ -70,7 +70,7 @@ static const float WhiteInfluence[14][14] = {
     {0.5, 0.5, 0.6, 0.8, 0.9, 1, 1, 1, 1, 0.6, 0.3, 0.4, 0.3, 0.5},
     {0.5, 0.5, 0.6, 0.8, 0.6, 0.5, 0.5, 0.6, 0.6, 0.6, 0.3, 0.4, 0.3, 0.5},
     {0.5, 0.5, 0.4, 0.3, 0.4, 0.4, 0.4, 0.4, 0.3, 0.3, 0.3, 0.3, 0.3, 0.5},
-    {0.5, 0.4, 0.2, 0.2, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.3, 0.3, 
+    {0.5, 0.4, 0.2, 0.2, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.3, 0.3,
         0.5},
     {0.5, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.5},
     {0.01, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
@@ -430,6 +430,7 @@ float judgeBoard(matrix m, char color) {
     value = correctBounds(value);
     value += dfsbridge(m, color);
     value = correctBounds(value);
+    value -= dfsbridge(m, opsColor(color));
     value -= dfsbridge(m, opsColor(color));
     value = correctBounds(value);
     value += bridgeFunction(m, color);

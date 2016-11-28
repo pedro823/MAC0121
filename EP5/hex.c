@@ -246,7 +246,7 @@ vPos alphaBetaPruneMin(matrix m, vPos a, vPos b, int depth, char color) {
                 matrix_undo(m, toPlay);
                 if(aux.value <= a.value)
                     return a; /* Poda a arvore por alpha */
-                if(aux.value > b.value) {
+                if(aux.value < b.value) {
                     ret.x.i = i;
                     ret.x.j = j;
                     ret.value = aux.value;
@@ -314,7 +314,7 @@ int main(int argc, char **argv) {
         /* Minha jogada */
         a.value = negInf;
         b.value = posInf;
-        move = alphaBetaPruneMax(m, a, b, 1, color);
+        move = alphaBetaPruneMax(m, a, b, 3, color);
         printf("%d %d\n", move.x.i, move.x.j);
         x = move.x;
         isTurn = matrix_play(m, x, color);
